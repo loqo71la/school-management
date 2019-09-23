@@ -1,6 +1,8 @@
 package com.truextend.problem1.module.student.service;
 
-public class Student {
+import com.truextend.problem1.module.common.service.Model;
+
+public class Student implements Model<Integer> {
 
     private Integer id;
 
@@ -8,10 +10,12 @@ public class Student {
 
     private String lastName;
 
+    @Override
     public Integer getId() {
         return id;
     }
 
+    @Override
     public void setId(Integer id) {
         this.id = id;
     }

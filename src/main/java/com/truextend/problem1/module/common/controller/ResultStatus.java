@@ -1,4 +1,4 @@
-package com.truextend.problem1.module.common;
+package com.truextend.problem1.module.common.controller;
 
 import com.fasterxml.jackson.annotation.JsonValue;
 import org.springframework.util.StringUtils;

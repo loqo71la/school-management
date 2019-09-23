@@ -47,6 +47,7 @@ public class PostStudentTest {
 
         verify(volatileStudents).put(eq(46), any(Student.class));
         verify(volatileStudents).keySet();
+        volatileStudents.remove(46);
     }
 
     @Test
@@ -63,6 +64,7 @@ public class PostStudentTest {
 
         verify(volatileStudents).put(eq(studentId), any(Student.class));
         verify(volatileStudents, never()).keySet();
+        volatileStudents.remove(studentId);
     }
 
 

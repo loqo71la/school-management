@@ -1,82 +1,73 @@
 package com.truextend.problem1.module.student.controller;
 
-import com.truextend.problem1.module.common.ResultInfo;
-import com.truextend.problem1.module.common.ResultStatus;
-import com.truextend.problem1.module.common.exception.BadRequestException;
-import com.truextend.problem1.module.student.service.StudentService;
+import com.truextend.problem1.module.common.constant.ControllerConstants;
+import com.truextend.problem1.module.common.constant.JsonFieldConstants;
+import com.truextend.problem1.module.common.controller.RestApiController;
+import com.truextend.problem1.module.student.service.Student;
+import com.truextend.problem1.module.student.service.StudentVolatileService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Collections;
+import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
+/**
+ * Manages HTTP request for students.
+ */
 @RestController
-@RequestMapping("/api/students")
-public class StudentController {
+@RequestMapping(ControllerConstants.STUDENT_URL)
+public class StudentController extends RestApiController<Integer, StudentJson, Student> {
 
-    private static final String ERROR_MESSAGE = "Invalid filters: %s";
-
+    /**
+     * Auto injects a proper service.
+     *
+     * @param studentService CrudService implementation for students.
+     */
     @Autowired
-    private StudentService studentService;
-
-    @GetMapping
-    public ResponseEntity<List<StudentJson>> getAll(@RequestParam Map<String, String> queryParams) {
-        Set<String> fields = queryParams.keySet();
-        if (!hasValidFields(fields)) {
-            throw new BadRequestException(buildErrorMessage(fields));
-        }
-        return ResponseEntity.ok(studentService.readAll(queryParams));
+    public void setService(StudentVolatileService studentService) {
+        super.modelService = studentService;
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<StudentJson> getById(@PathVariable int id) {
-        return ResponseEntity.ok(studentService.read(id));
+    /**
+     * Returns the list of StudentJson field names.
+     *
+     * @return the list of fields.
+     */
+    @Override
+    protected List<String> getJsonFields() {
+        return Arrays.asList(JsonFieldConstants.STUDENT_ID,
+                JsonFieldConstants.STUDENT_NAME,
+                JsonFieldConstants.STUDENT_LAST_NAME);
     }
 
-    @PostMapping
-    public ResponseEntity<ResultInfo> post(@RequestBody StudentJson student) {
-        studentService.create(student);
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .body(buildResultInfo());
+    /**
+     * Converts to studentJson a specific student.
+     *
+     * @param student to be converted.
+     * @return a studentJson.
+     */
+    @Override
+    protected StudentJson toJson(Student student) {
+        StudentJson studentJson = new StudentJson();
+        studentJson.setId(student.getId());
+        studentJson.setName(student.getName());
+        studentJson.setLastName(student.getLastName());
+        return studentJson;
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<ResultInfo> put(@PathVariable int id, @RequestBody StudentJson student) {
-        studentService.update(id, student);
-        return ResponseEntity.ok(buildResultInfo());
-    }
-
-    @DeleteMapping("/{id}")
-    public ResponseEntity<ResultInfo> delete(@PathVariable int id) {
-        studentService.delete(id);
-        return ResponseEntity.ok(buildResultInfo());
-    }
-
-    private boolean hasValidFields(Set<String> fields) {
-        return StudentJson.FIELDS
-                .containsAll(fields);
-    }
-
-    private String buildErrorMessage(Set<String> fields) {
-        fields.removeAll(StudentJson.FIELDS);
-        return String.format(ERROR_MESSAGE, fields.toString());
-    }
-
-    private ResultInfo buildResultInfo() {
-        ResultInfo resultInfo = new ResultInfo();
-        resultInfo.setStatus(ResultStatus.SUCCESS);
-        return resultInfo;
+    /**
+     * Converts to student a specific studentJson.
+     *
+     * @param studentJson to be converted.
+     * @return a student.
+     */
+    @Override
+    protected Student toModel(StudentJson studentJson) {
+        Student student = new Student();
+        student.setId(studentJson.getId());
+        student.setName(studentJson.getName());
+        student.setLastName(studentJson.getLastName());
+        return student;
     }
 }

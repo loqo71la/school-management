@@ -1,5 +1,6 @@
 package com.truextend.problem1.configuration;
 
+import com.truextend.problem1.module.clazz.service.Clazz;
 import com.truextend.problem1.module.student.service.Student;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -32,5 +33,23 @@ public class LoadDataConfiguration {
         volatileStudents.put(janeStudent.getId(), janeStudent);
         volatileStudents.put(pamStudent.getId(), pamStudent);
         return volatileStudents;
+    }
+
+    @Bean
+    public Map<String, Clazz> loadClazzes() {
+        Clazz geologyClazz = new Clazz();
+        geologyClazz.setDescription("Sedimentary Petrology");
+        geologyClazz.setTitle("Sedimentary Petrology");
+        geologyClazz.setId("1A-192");
+
+        Clazz musicClazz = new Clazz();
+        musicClazz.setDescription("Art of Listening");
+        musicClazz.setTitle("Art of Listening");
+        musicClazz.setId("3C-014");
+
+        Map<String, Clazz> volatileClazzes = new HashMap<>();
+        volatileClazzes.put(geologyClazz.getId(), geologyClazz);
+        volatileClazzes.put(musicClazz.getId(), musicClazz);
+        return volatileClazzes;
     }
 }

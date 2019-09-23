@@ -1,21 +1,17 @@
 package com.truextend.problem1.module.student.controller;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-
-import java.util.Arrays;
-import java.util.List;
+import com.truextend.problem1.module.common.constant.JsonFieldConstants;
 
 public class StudentJson {
 
-    public static final List<String> FIELDS = Arrays.asList("studentId", "firstName", "lastName");
-
-    @JsonProperty("studentId")
+    @JsonProperty(JsonFieldConstants.STUDENT_ID)
     private Integer id;
 
-    @JsonProperty("firstName")
+    @JsonProperty(JsonFieldConstants.STUDENT_NAME)
     private String name;
 
-    @JsonProperty("lastName")
+    @JsonProperty(JsonFieldConstants.STUDENT_LAST_NAME)
     private String lastName;
 
     public Integer getId() {

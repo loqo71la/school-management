@@ -1,5 +1,6 @@
-package com.truextend.problem1.integration.student;
+package com.truextend.problem1.integration.clazz;
 
+import com.truextend.problem1.module.clazz.service.Clazz;
 import com.truextend.problem1.module.student.service.Student;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -19,11 +20,8 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -31,57 +29,57 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @AutoConfigureMockMvc
-public class PutStudentTest {
+public class PutClazzTest {
 
     @SpyBean
-    private Map<Integer, Student> volatileStudents;
+    private Map<String, Clazz> volatileClazzes;
 
     @Autowired
     private MockMvc mockMvc;
 
     @Test
-    public void PutStudentEndpoint_WithoutIdInThePayload_ReturnsSuccess() throws Exception {
-        int studentId = 5;
-        assertTrue(volatileStudents.containsKey(studentId));
+    public void PutClazzEndpoint_WithoutCodeInThePayload_ReturnsSuccess() throws Exception {
+        String clazzCode = "1A-192";
+        assertTrue(volatileClazzes.containsKey(clazzCode));
 
-        mockMvc.perform(put("/api/students/" + studentId)
+        mockMvc.perform(put("/api/classes/" + clazzCode)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content("{\"firstName\": \"Jane\", \"lastName\": \"Bam\"}"))
+                .content("{\"title\": \"Petrology\", \"description\": \"Sedimentary Petrology\"}"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.*", hasSize(1)))
                 .andExpect(jsonPath("$.status", is("success")));
 
-        verify(volatileStudents).put(eq(studentId), any(Student.class));
+        verify(volatileClazzes).put(eq(clazzCode), any(Clazz.class));
     }
 
     @Test
-    public void PutStudentEndpoint_WithIdInThePayload_ReturnsSuccessWithoutModifyTheId() throws Exception {
-        int studentId = 5;
-        assertTrue(volatileStudents.containsKey(studentId));
+    public void PutClazzEndpoint_WithCodeInThePayload_ReturnsSuccessWithoutModifyTheCode() throws Exception {
+        String clazzCode = "1A-192";
+        assertTrue(volatileClazzes.containsKey(clazzCode));
 
-        mockMvc.perform(put("/api/students/" + studentId)
+        mockMvc.perform(put("/api/classes/" + clazzCode)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content("{\"id\": 14, \"name\": \"Jane\", \"lastName\": \"Bam\"}"))
+                .content("{\"code\": \"1S-014\", \"title\": \"Petrology\", \"description\": \"Sedimentary Petrology\"}"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.*", hasSize(1)))
                 .andExpect(jsonPath("$.status", is("success")));
 
-        verify(volatileStudents).put(eq(studentId), any(Student.class));
+        verify(volatileClazzes).put(eq(clazzCode), any(Clazz.class));
     }
 
     @Test
-    public void PutStudentEndpoint_WithInvalidId_ReturnsNotFoundError() throws Exception {
-        int studentId = 8;
-        assertFalse(volatileStudents.containsKey(studentId));
+    public void PutClazzEndpoint_WithInvalidCode_ReturnsNotFoundError() throws Exception {
+        String clazzCode = "1H-104";
+        assertFalse(volatileClazzes.containsKey(clazzCode));
 
-        mockMvc.perform(put("/api/students/" + studentId)
+        mockMvc.perform(put("/api/classes/" + clazzCode)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content("{\"name\": \"Pam\", \"lastName\": \"Bam\"}"))
+                .content("{\"title\": \"Petrology\", \"description\": \"Sedimentary Petrology\"}"))
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.*", hasSize(2)))
                 .andExpect(jsonPath("$.status", is("error")))
-                .andExpect(jsonPath("$.message", is("Student not found")));
+                .andExpect(jsonPath("$.message", is("Class not found")));
 
-        verify(volatileStudents, never()).put(eq(studentId), any(Student.class));
+        verify(volatileClazzes, never()).put(eq(clazzCode), any(Clazz.class));
     }
 }

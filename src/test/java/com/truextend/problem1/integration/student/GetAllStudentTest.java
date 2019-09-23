@@ -10,7 +10,6 @@ import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.util.List;
 import java.util.Map;
 
 import static org.hamcrest.Matchers.hasSize;
@@ -32,8 +31,6 @@ public class GetAllStudentTest {
     @Autowired
     private MockMvc mockMvc;
 
-    private List<Student> studentList;
-
     @Test
     public void GetAllStudentEndpoint_WithoutFilters_ReturnsTheStudentList() throws Exception {
         mockMvc.perform(get("/api/students"))
@@ -41,7 +38,7 @@ public class GetAllStudentTest {
                 .andExpect(jsonPath("$", hasSize(3)))
                 .andExpect(jsonPath("$[0].studentId", is(5)))
                 .andExpect(jsonPath("$[0].firstName", is("Jane")))
-                .andExpect(jsonPath("$[0].lastName", is("Graham")))
+                .andExpect(jsonPath("$[0].lastName", is("Bam")))
                 .andExpect(jsonPath("$[1].studentId", is(27)))
                 .andExpect(jsonPath("$[1].firstName", is("Pam")))
                 .andExpect(jsonPath("$[1].lastName", is("Bam")))

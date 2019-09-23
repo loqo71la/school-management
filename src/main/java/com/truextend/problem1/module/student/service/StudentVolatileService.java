@@ -1,123 +1,70 @@
 package com.truextend.problem1.module.student.service;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.truextend.problem1.module.common.exception.ItemNotFoundException;
-import com.truextend.problem1.module.common.exception.UnauthorizedException;
-import com.truextend.problem1.module.student.controller.StudentJson;
+import com.truextend.problem1.module.common.constant.JsonFieldConstants;
+import com.truextend.problem1.module.common.service.VolatileService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
-import java.util.List;
 import java.util.Map;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 import static java.util.Comparator.comparing;
 
 @Service
-public class StudentVolatileService implements StudentService {
+public class StudentVolatileService extends VolatileService<Integer, Student> {
 
+    /**
+     * Stores the error message for unauthorized.
+     */
     private static final String UNAUTHORIZED_ERROR = "Student already exists";
 
+    /**
+     * Stores the error message for not found.
+     */
     private static final String NOT_FOUND_ERROR = "Student not found";
 
+    /**
+     * Default Constructor to load properties.
+     */
+    public StudentVolatileService() {
+        super.unauthorizedErrorMessage = UNAUTHORIZED_ERROR;
+        super.notFoundErrorMessage = NOT_FOUND_ERROR;
+    }
+
+    /**
+     * Auto injects the volatile students in the system.
+     *
+     * @param volatileStudents to be set.
+     */
     @Autowired
-    private Map<Integer, Student> volatileStudents;
-
-    @Autowired
-    private ObjectMapper objectMapper;
-
-    @Override
-    public StudentJson create(StudentJson studentJson) {
-        Integer studentId = studentJson.getId();
-        if (volatileStudents.containsKey(studentId)) {
-            throw new UnauthorizedException(UNAUTHORIZED_ERROR);
-        }
-
-        if (studentId == null) {
-            studentId = volatileStudents.keySet()
-                    .stream()
-                    .max(comparing(id -> id))
-                    .orElse(volatileStudents.size());
-            studentJson.setId(++studentId);
-        }
-        volatileStudents.put(studentId, toStudent(studentJson));
-        return studentJson;
+    public void setVolatileStudents(Map<Integer, Student> volatileStudents) {
+        super.volatileData = volatileStudents;
     }
 
     @Override
-    public List<StudentJson> readAll() {
-        return readAll(Collections.emptyMap());
-    }
-
-    @Override
-    public List<StudentJson> readAll(Map<String, String> queryParams) {
-        Predicate<Student> matcher = student -> Boolean.TRUE;
-        if (queryParams != null && !queryParams.isEmpty()) {
-            StudentJson studentJson = objectMapper.convertValue(queryParams, StudentJson.class);
-            matcher = student -> match(student, studentJson);
-        }
-        return volatileStudents.values()
+    protected Integer findLastId() {
+        int lastId = super.volatileData
+                .keySet()
                 .stream()
-                .filter(matcher)
-                .sorted(comparing(Student::getId))
-                .map(this::toStudentJson)
-                .collect(Collectors.toList());
+                .max(comparing(id -> id))
+                .orElse(super.volatileData.size());
+        return ++lastId;
     }
 
     @Override
-    public StudentJson read(Integer id) {
-        if (!volatileStudents.containsKey(id)) {
-            throw new ItemNotFoundException(NOT_FOUND_ERROR);
-        }
-        return toStudentJson(volatileStudents.get(id));
-    }
-
-    @Override
-    public void update(Integer id, StudentJson studentJson) {
-        if (!volatileStudents.containsKey(id)) {
-            throw new ItemNotFoundException(NOT_FOUND_ERROR);
-        }
-        studentJson.setId(id);
-        volatileStudents.put(id, toStudent(studentJson));
-    }
-
-    @Override
-    public void delete(Integer id) {
-        volatileStudents.remove(id);
-    }
-
-    private boolean match(Student student, StudentJson studentJson) {
+    protected boolean match(Student student, Map<String, String> queryParams) {
         boolean isMatchedName = Boolean.FALSE;
-        if (studentJson.getName() != null) {
+        if (queryParams.containsKey(JsonFieldConstants.STUDENT_NAME)) {
             isMatchedName = student.getName()
                     .toLowerCase()
-                    .contains(studentJson.getName());
+                    .contains(queryParams.get(JsonFieldConstants.STUDENT_NAME));
         }
 
         boolean isMatchedLastName = Boolean.FALSE;
-        if (studentJson.getLastName() != null) {
+        if (queryParams.containsKey(JsonFieldConstants.STUDENT_LAST_NAME)) {
             isMatchedLastName = student.getLastName()
                     .toLowerCase()
-                    .contains(studentJson.getLastName());
+                    .contains(queryParams.get(JsonFieldConstants.STUDENT_LAST_NAME));
         }
         return isMatchedName || isMatchedLastName;
-    }
-
-    private StudentJson toStudentJson(Student student) {
-        StudentJson studentJson = new StudentJson();
-        studentJson.setId(student.getId());
-        studentJson.setName(student.getName());
-        studentJson.setLastName(student.getLastName());
-        return studentJson;
-    }
-
-    private Student toStudent(StudentJson studentJson) {
-        Student student = new Student();
-        student.setId(studentJson.getId());
-        student.setName(studentJson.getName());
-        student.setLastName(studentJson.getLastName());
-        return student;
     }
 }

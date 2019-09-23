@@ -1,7 +1,7 @@
 package com.truextend.problem1.handler;
 
-import com.truextend.problem1.module.common.ResultInfo;
-import com.truextend.problem1.module.common.ResultStatus;
+import com.truextend.problem1.module.common.controller.ResultInfo;
+import com.truextend.problem1.module.common.controller.ResultStatus;
 import com.truextend.problem1.module.common.exception.BadRequestException;
 import com.truextend.problem1.module.common.exception.ItemNotFoundException;
 import com.truextend.problem1.module.common.exception.UnauthorizedException;
