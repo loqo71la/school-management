@@ -20,9 +20,9 @@ import java.util.stream.Collectors;
 /**
  * Base controller to manage communication between http requests and services.
  *
- * @param <K> represents an id.
- * @param <T> represents a serialized json.
- * @param <U> represents a model.
+ * @param <K> model id.
+ * @param <T> model dto.
+ * @param <U> model.
  */
 public abstract class RestApiController<K, T, U> {
 
@@ -51,7 +51,7 @@ public abstract class RestApiController<K, T, U> {
 
         List<T> jsonList = modelService.readAll(queryParams)
                 .stream()
-                .map(this::toJson)
+                .map(this::toDto)
                 .collect(Collectors.toList());
         return ResponseEntity.ok(jsonList);
     }
@@ -64,19 +64,19 @@ public abstract class RestApiController<K, T, U> {
      */
     @GetMapping("/{id}")
     public ResponseEntity<T> getById(@PathVariable K id) {
-        T json = toJson(modelService.read(id));
+        T json = toDto(modelService.read(id));
         return ResponseEntity.ok(json);
     }
 
     /**
      * HTTP Post method.
      *
-     * @param json to be saved.
+     * @param dto to be saved.
      * @return the details of the processed request.
      */
     @PostMapping
-    public ResponseEntity<ResultInfo> post(@RequestBody T json) {
-        modelService.create(toModel(json));
+    public ResponseEntity<ResultInfo> post(@RequestBody T dto) {
+        modelService.create(toModel(dto));
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(buildResultInfo());
     }
@@ -85,12 +85,12 @@ public abstract class RestApiController<K, T, U> {
      * HTTP Put method.
      *
      * @param id   of selected json.
-     * @param json to be updated.
+     * @param dto to be updated.
      * @return the details of the processed request.
      */
     @PutMapping("/{id}")
-    public ResponseEntity<ResultInfo> put(@PathVariable K id, @RequestBody T json) {
-        modelService.update(id, toModel(json));
+    public ResponseEntity<ResultInfo> put(@PathVariable K id, @RequestBody T dto) {
+        modelService.update(id, toModel(dto));
         return ResponseEntity.ok(buildResultInfo());
     }
 
@@ -114,20 +114,20 @@ public abstract class RestApiController<K, T, U> {
     protected abstract List<String> getJsonFields();
 
     /**
-     * Converts to json a specific model.
+     * Converts model to dto.
      *
      * @param model to be converted.
-     * @return a model.
+     * @return a dto.
      */
-    protected abstract T toJson(U model);
+    protected abstract T toDto(U model);
 
     /**
-     * Converts to model a specific json.
+     * Converts dto to model.
      *
-     * @param json to be converted.
-     * @return a json.
+     * @param dto to be converted.
+     * @return a model.
      */
-    protected abstract U toModel(T json);
+    protected abstract U toModel(T dto);
 
     /**
      * Verifies if the selected fields are valid.

@@ -3,7 +3,7 @@ package com.truextend.problem1.module.student.controller;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.truextend.problem1.module.common.constant.JsonFieldConstants;
 
-public class StudentJson {
+public class StudentDto {
 
     @JsonProperty(JsonFieldConstants.STUDENT_ID)
     private Integer id;

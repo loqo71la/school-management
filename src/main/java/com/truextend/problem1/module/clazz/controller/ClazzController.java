@@ -17,7 +17,7 @@ import java.util.List;
  */
 @RestController
 @RequestMapping(ControllerConstants.CLAZZ_URL)
-public class ClazzController extends RestApiController<String, ClazzJson, Clazz> {
+public class ClazzController extends RestApiController<String, ClazzDto, Clazz> {
 
     /**
      * Auto injects a proper service.
@@ -42,32 +42,32 @@ public class ClazzController extends RestApiController<String, ClazzJson, Clazz>
     }
 
     /**
-     * Converts to clazz a specific clazzJson.
+     * Converts clazz to clazzDto.
      *
      * @param clazz to be converted.
-     * @return a clazzJson.
+     * @return a clazzDto.
      */
     @Override
-    protected ClazzJson toJson(Clazz clazz) {
-        ClazzJson clazzJson = new ClazzJson();
-        clazzJson.setCode(clazz.getId());
-        clazzJson.setTitle(clazz.getTitle());
-        clazzJson.setDescription(clazz.getDescription());
-        return clazzJson;
+    protected ClazzDto toDto(Clazz clazz) {
+        ClazzDto clazzDto = new ClazzDto();
+        clazzDto.setCode(clazz.getId());
+        clazzDto.setTitle(clazz.getTitle());
+        clazzDto.setDescription(clazz.getDescription());
+        return clazzDto;
     }
 
     /**
-     * Converts to clazzJson a specific clazz.
+     * Converts clazzDto to clazz.
      *
-     * @param clazzJson to be converted.
+     * @param clazzDto to be converted.
      * @return a clazz.
      */
     @Override
-    protected Clazz toModel(ClazzJson clazzJson) {
+    protected Clazz toModel(ClazzDto clazzDto) {
         Clazz clazz = new Clazz();
-        clazz.setId(clazzJson.getCode());
-        clazz.setTitle(clazzJson.getTitle());
-        clazz.setDescription(clazzJson.getDescription());
+        clazz.setId(clazzDto.getCode());
+        clazz.setTitle(clazzDto.getTitle());
+        clazz.setDescription(clazzDto.getDescription());
         return clazz;
     }
 }

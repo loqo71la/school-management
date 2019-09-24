@@ -3,7 +3,7 @@ package com.truextend.problem1.module.clazz.controller;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.truextend.problem1.module.common.constant.JsonFieldConstants;
 
-public class ClazzJson {
+public class ClazzDto {
 
     @JsonProperty(JsonFieldConstants.CLAZZ_CODE)
     private String code;

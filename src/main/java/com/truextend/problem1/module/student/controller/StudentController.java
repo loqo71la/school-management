@@ -17,7 +17,7 @@ import java.util.List;
  */
 @RestController
 @RequestMapping(ControllerConstants.STUDENT_URL)
-public class StudentController extends RestApiController<Integer, StudentJson, Student> {
+public class StudentController extends RestApiController<Integer, StudentDto, Student> {
 
     /**
      * Auto injects a proper service.
@@ -42,32 +42,32 @@ public class StudentController extends RestApiController<Integer, StudentJson, S
     }
 
     /**
-     * Converts to studentJson a specific student.
+     * Converts student to studentDto.
      *
      * @param student to be converted.
-     * @return a studentJson.
+     * @return a studentDto.
      */
     @Override
-    protected StudentJson toJson(Student student) {
-        StudentJson studentJson = new StudentJson();
-        studentJson.setId(student.getId());
-        studentJson.setName(student.getName());
-        studentJson.setLastName(student.getLastName());
-        return studentJson;
+    protected StudentDto toDto(Student student) {
+        StudentDto studentDto = new StudentDto();
+        studentDto.setId(student.getId());
+        studentDto.setName(student.getName());
+        studentDto.setLastName(student.getLastName());
+        return studentDto;
     }
 
     /**
-     * Converts to student a specific studentJson.
+     * Converts studentDto to student.
      *
-     * @param studentJson to be converted.
+     * @param studentDto to be converted.
      * @return a student.
      */
     @Override
-    protected Student toModel(StudentJson studentJson) {
+    protected Student toModel(StudentDto studentDto) {
         Student student = new Student();
-        student.setId(studentJson.getId());
-        student.setName(studentJson.getName());
-        student.setLastName(studentJson.getLastName());
+        student.setId(studentDto.getId());
+        student.setName(studentDto.getName());
+        student.setLastName(studentDto.getLastName());
         return student;
     }
 }
