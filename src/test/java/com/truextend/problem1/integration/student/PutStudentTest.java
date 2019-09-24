@@ -1,6 +1,8 @@
 package com.truextend.problem1.integration.student;
 
 import com.truextend.problem1.module.student.service.Student;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,11 +21,8 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -39,12 +38,25 @@ public class PutStudentTest {
     @Autowired
     private MockMvc mockMvc;
 
+    private Integer studentId;
+
+    @Before
+    public void setup() {
+        studentId = 5;
+    }
+
+    @After
+    public void tearDown() {
+        volatileStudents.get(studentId)
+                .setName("Jane");
+        volatileStudents.get(studentId)
+                .setLastName("Graham");
+    }
+
     @Test
     public void PutStudentEndpoint_WithoutIdInThePayload_ReturnsSuccess() throws Exception {
-        int studentId = 5;
         assertTrue(volatileStudents.containsKey(studentId));
-
-        mockMvc.perform(put("/api/students/" + studentId)
+        mockMvc.perform(put(String.format("/api/students/%d", studentId))
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("{\"firstName\": \"Jane\", \"lastName\": \"Bam\"}"))
                 .andExpect(status().isOk())
@@ -56,12 +68,10 @@ public class PutStudentTest {
 
     @Test
     public void PutStudentEndpoint_WithIdInThePayload_ReturnsSuccessWithoutModifyTheId() throws Exception {
-        int studentId = 5;
         assertTrue(volatileStudents.containsKey(studentId));
-
-        mockMvc.perform(put("/api/students/" + studentId)
+        mockMvc.perform(put(String.format("/api/students/%d", studentId))
                 .contentType(MediaType.APPLICATION_JSON)
-                .content("{\"id\": 14, \"name\": \"Jane\", \"lastName\": \"Bam\"}"))
+                .content(String.format("{\"studentId\": %d, \"firstName\": \"Jane\", \"lastName\": \"Bam\"}", studentId)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.*", hasSize(1)))
                 .andExpect(jsonPath("$.status", is("success")));
@@ -74,7 +84,7 @@ public class PutStudentTest {
         int studentId = 8;
         assertFalse(volatileStudents.containsKey(studentId));
 
-        mockMvc.perform(put("/api/students/" + studentId)
+        mockMvc.perform(put(String.format("/api/students/%d", studentId))
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("{\"name\": \"Pam\", \"lastName\": \"Bam\"}"))
                 .andExpect(status().isNotFound())

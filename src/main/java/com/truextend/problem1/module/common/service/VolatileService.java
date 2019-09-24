@@ -9,7 +9,7 @@ import java.util.Map;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-public abstract class VolatileService<K extends Comparable, T extends Model<K>> implements CrudService<K, T> {
+public abstract class VolatileService<K, T extends Model<K>> implements CrudService<K, T> {
 
     /**
      * Stores the error message for unauthorized.
@@ -54,6 +54,7 @@ public abstract class VolatileService<K extends Comparable, T extends Model<K>> 
     public List<T> readAll(Map<String, String> queryParams) {
         return volatileData.values()
                 .stream()
+                .sorted()
                 .filter(buildFilter(queryParams))
                 .collect(Collectors.toList());
     }

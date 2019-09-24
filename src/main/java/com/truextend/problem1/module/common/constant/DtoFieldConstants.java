@@ -1,9 +1,9 @@
 package com.truextend.problem1.module.common.constant;
 
 /**
- * Constants for json fields.
+ * Constants for dto fields.
  */
-public final class JsonFieldConstants {
+public final class DtoFieldConstants {
 
     public static final String CLAZZ_CODE = "code";
 

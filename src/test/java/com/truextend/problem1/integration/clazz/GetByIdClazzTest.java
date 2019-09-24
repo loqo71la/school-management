@@ -2,6 +2,8 @@ package com.truextend.problem1.integration.clazz;
 
 import com.truextend.problem1.module.clazz.service.Clazz;
 import com.truextend.problem1.module.student.service.Student;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,31 +37,31 @@ public class GetByIdClazzTest {
     private MockMvc mockMvc;
 
     @Test
-    public void GetClazzByCodeEndpoint_WithValidId_ReturnsAClazz() throws Exception {
+    public void GetClazzByCodeEndpoint_WithValidClazzCode_ReturnsAClazz() throws Exception {
         String clazzCode = "3C-014";
         assertTrue(volatileClazzes.containsKey(clazzCode));
 
-        mockMvc.perform(get("/api/classes/" + clazzCode))
+        mockMvc.perform(get(String.format("/api/classes/%s", clazzCode)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.*", hasSize(3)))
                 .andExpect(jsonPath("$.code", is(clazzCode)))
-                .andExpect(jsonPath("$.title", is("Art of Listening")))
+                .andExpect(jsonPath("$.title", is("Music")))
                 .andExpect(jsonPath("$.description", is("Art of Listening")));
 
         verify(volatileClazzes).get(clazzCode);
     }
 
     @Test
-    public void GetClazzByCodeEndpoint_WithInvalidId_ReturnsNotFoundError() throws Exception {
-        String clazzCode = "3C-018";
-        assertFalse(volatileClazzes.containsKey(clazzCode));
+    public void GetClazzByCodeEndpoint_WithInvalidClazzCode_ReturnsNotFoundError() throws Exception {
+        String invalidClazzCode = "8C-718";
+        assertFalse(volatileClazzes.containsKey(invalidClazzCode));
 
-        mockMvc.perform(get("/api/classes/" + clazzCode))
+        mockMvc.perform(get(String.format("/api/classes/%s", invalidClazzCode)))
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.*", hasSize(2)))
                 .andExpect(jsonPath("$.status", is("error")))
                 .andExpect(jsonPath("$.message", is("Class not found")));
 
-        verify(volatileClazzes, never()).get(clazzCode);
+        verify(volatileClazzes, never()).get(invalidClazzCode);
     }
 }

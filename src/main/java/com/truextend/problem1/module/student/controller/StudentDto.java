@@ -1,17 +1,17 @@
 package com.truextend.problem1.module.student.controller;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.truextend.problem1.module.common.constant.JsonFieldConstants;
+import com.truextend.problem1.module.common.constant.DtoFieldConstants;
 
 public class StudentDto {
 
-    @JsonProperty(JsonFieldConstants.STUDENT_ID)
+    @JsonProperty(DtoFieldConstants.STUDENT_ID)
     private Integer id;
 
-    @JsonProperty(JsonFieldConstants.STUDENT_NAME)
+    @JsonProperty(DtoFieldConstants.STUDENT_NAME)
     private String name;
 
-    @JsonProperty(JsonFieldConstants.STUDENT_LAST_NAME)
+    @JsonProperty(DtoFieldConstants.STUDENT_LAST_NAME)
     private String lastName;
 
     public Integer getId() {

@@ -1,0 +1,385 @@
+# Problem 1
+
+REST API for a system that assigns students to classes.
+
+To run the set of tests
+```
+./gradlew clean test
+```
+
+To run the API
+```
+./gradlew bootRun
+```
+or
+```
+./gradlew clean build
+java -jar build/libs/problem1-0.0.1-SNAPSHOT.jar
+```
+
+# REST API Structure
+
+## Students
+
+### GET `/api/studets` status: `200 OK`
+_Returns the list of all students_
+```
+[
+    {
+        "studentId": 27,
+        "firstName": "Pam",
+        "lastName": "Bam"        
+    },
+    {
+        "studentId": 32,
+        "firstName": "Steve",
+        "lastName": "Collin"        
+    },
+    ..
+    ..
+]
+```
+
+### GET `/api/studets?firstName=pam` status: `200 OK`
+_Returns the list of students with specific params_
+```
+[
+    {
+        "studentId": 27,
+        "firstName": "Pam",
+        "lastName": "Bam"        
+    }
+]
+```
+
+###GET `/api/studets?age=14` status: `400 Bad Request`
+_Returns an error with invalid params_
+```
+{
+    "status": "error",
+    "message": "Invalid filters: [age]"
+}
+```
+
+### GET `/api/studets/{id}` status: `200 OK`
+_Returns single student_
+```
+{
+    "studentId": 27,
+    "firstName": "Pam",
+    "lastName": "Bam"       
+}
+```
+
+### GET `/api/studets/{id}` status: `404 Not Found`
+_Returns an error when the student is not found_
+```
+{
+    "status": "error",
+    "message": "Student not found"
+}
+```
+
+### POST `/api/studets` status: `201 Created`
+_Returns the success info when the student was created_
+```
+{
+    "status": "success",
+}
+```
+
+### POST `/api/studets` status: `401 Unauthorized`
+_Returns an error when the student already exists_
+```
+{
+    "status": "error",
+    "message": "Student already exists"
+}
+```
+
+### PUT `/api/studets/{id}` status: `200 OK`
+_Returns the success info when the student was updated_
+```
+{
+    "status": "success",
+}
+```
+
+### PUT `/api/studets` status: `404 Not Found`
+_Returns an error when the student is not found_
+```
+{
+    "status": "error",
+    "message": "Student not found"
+}
+```
+
+### DELETE `/api/studets/{id}` status: `200 OK`
+_Returns the success info when the student was removed_
+```
+{
+    "status": "success",
+}
+```
+
+## Classes
+
+### GET `/api/classes` status: `200 OK`
+_Returns the list of all classes_
+```
+[
+    {
+        "code": "1A-192",
+        "title": "Geology",
+        "description": "Sedimentary Petrology"        
+    },
+    {
+        "code": "3C-014",
+        "title": "Music",
+        "description": "Art of Listening"        
+    },
+    ..
+    ..
+]
+```
+
+### GET `/api/classes?title=usic` status: `200 OK`
+_Returns the list of classes with specific params_
+```
+[
+    {
+        "studentId": "3C-014",
+        "title": "Music",
+        "description": "Art of Listening"
+    }
+]
+```
+
+### GET `/api/classes?floor=47` status: `400 Bad Request`
+_Returns an error with invalid params_
+```
+{
+    "status": "error",
+    "message": "Invalid filters: [floor]"
+}
+```
+
+### GET `/api/classes/{code}` status: `200 OK`
+_Returns single student_
+```
+{
+    "code": "1A-192",
+    "title": "Geology",
+    "description": "Sedimentary Petrology"
+}
+```
+
+### GET `/api/classes/{code}` status: `404 Not Found`
+_Returns an error when the class is not found_
+```
+{
+    "status": "error",
+    "message": "Class not found"
+}
+```
+
+### POST `/api/classes` status: `201 Created`
+_Returns the success info when the class was created_
+```
+{
+    "status": "success",
+}
+```
+
+### POST `/api/classes` status: `401 Unauthorized`
+_Returns an error when the class already exists_
+```
+{
+    "status": "error",
+    "message": "Class already exists"
+}
+```
+
+### PUT `/api/classes/{code}` status: `200 OK`
+_Returns the success info when the class was updated_
+```
+{
+    "status": "success",
+}
+```
+
+### PUT `/api/classes` status: `404 Not Found`
+
+_Returns an error when the class is not found_
+```
+{
+    "status": "error",
+    "message": "Class not found"
+}
+```
+
+### DELETE `/api/classes/{code}` status: `200 OK`
+_Returns the success info when the class was removed_
+```
+{
+    "status": "success",
+}
+```
+
+## Students by Class
+
+### GET `/api/classes/{code}/students` status: `200 OK`
+_Returns the list of all students for specific class_
+```
+[
+    {
+        "studentId": 27,
+        "firstName": "Pam",
+        "lastName": "Bam"        
+    },
+    {
+        "studentId": 32,
+        "firstName": "Steve",
+        "lastName": "Collin"        
+    },
+    ..
+    ..
+]
+
+```
+### GET `/api/classes/{code}/students` status: `404 Not Found`
+_Returns an error when the class is not found_
+```
+{
+    "status": "error",
+    "message": "Class not found"
+}
+```
+
+### GET `/api/classes/{code}/students?lastName=collin` status: `200 OK`
+_Returns the list of students with specific params_
+```
+[
+    {
+        "studentId": 32,
+        "firstName": "Steve",
+        "lastName": "Collin"        
+    }
+]
+```
+
+### GET `/api/classes/{code}/students?floor=47` status: `400 Bad Request`
+_Returns an error with invalid params_
+```
+{
+    "status": "error",
+    "message": "Invalid filters: [floor]"
+}
+```
+
+### PUT `/api/classes/{code}/students/{id}` status: `200 OK`
+_Returns the success info when the student was added to the class_
+```
+{
+    "status": "success",
+}
+```
+
+### PUT `/api/classes/{code}/students/{id}` status: `404 Not Found`
+
+_Returns an error when the class is not found_
+```
+{
+    "status": "error",
+    "message": "Class not found"
+}
+```
+
+### PUT `/api/classes/{code}/students/{id}` status: `404 Not Found`
+
+_Returns an error when the student is not found_
+```
+{
+    "status": "error",
+    "message": "Student not found"
+}
+```
+
+## Classes by Student
+
+### GET `/api/student/{id}/classes` status: `200 OK`
+_Returns the list of all classes for specific student_
+```
+[
+    {
+        "code": "1A-192",
+        "title": "Geology",
+        "description": "Sedimentary Petrology"        
+    },
+    {
+        "code": "3C-014",
+        "title": "Music",
+        "description": "Art of Listening"        
+    },
+    ..
+    ..
+]
+
+```
+### GET `/api/student/{id}/classes` status: `404 Not Found`
+_Returns an error when the student is not found_
+```
+{
+    "status": "error",
+    "message": "Student not found"
+}
+```
+
+### GET `/api/student/{id}/classes?lastName=collin` status: `200 OK`
+_Returns the list of classes with specific params_
+```
+[
+    {
+        "code": "1A-192",
+        "title": "Geology",
+        "description": "Sedimentary Petrology"        
+    }
+]
+```
+
+### GET `/api/student/{id}/classes?age=72` status: `400 Bad Request`
+_Returns an error with invalid params_
+```
+{
+    "status": "error",
+    "message": "Invalid filters: [age]"
+}
+```
+
+### PUT `/api/student/{id}/classes/{code}` status: `200 OK`
+_Returns the success info when the student was added to the class_
+```
+{
+    "status": "success",
+}
+```
+
+### PUT `/api/student/{id}/classes/{code}` status: `404 Not Found`
+
+_Returns an error when the student is not found_
+```
+{
+    "status": "error",
+    "message": "Student not found"
+}
+```
+
+### PUT `/api/student/{id}/classes/{code}` status: `404 Not Found`
+
+_Returns an error when the class is not found_
+```
+{
+    "status": "error",
+    "message": "Class not found"
+}
+```

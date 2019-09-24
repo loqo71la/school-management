@@ -2,6 +2,9 @@ package com.truextend.problem1.module.student.service;
 
 import com.truextend.problem1.module.common.service.Model;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Student implements Model<Integer> {
 
     private Integer id;
@@ -9,6 +12,12 @@ public class Student implements Model<Integer> {
     private String name;
 
     private String lastName;
+
+    private List<String> clazzCodeList;
+
+    public Student() {
+        clazzCodeList = new ArrayList<>();
+    }
 
     @Override
     public Integer getId() {
@@ -36,4 +45,16 @@ public class Student implements Model<Integer> {
         this.lastName = lastName;
     }
 
+    public List<String> getClazzCodeList() {
+        return clazzCodeList;
+    }
+
+    public void addClazzCode(String clazzCode) {
+        clazzCodeList.add(clazzCode);
+    }
+
+    @Override
+    public int compareTo(Model<Integer> student) {
+        return id.compareTo(student.getId());
+    }
 }

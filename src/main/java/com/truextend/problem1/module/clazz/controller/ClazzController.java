@@ -3,7 +3,7 @@ package com.truextend.problem1.module.clazz.controller;
 import com.truextend.problem1.module.clazz.service.Clazz;
 import com.truextend.problem1.module.clazz.service.ClazzVolatileService;
 import com.truextend.problem1.module.common.constant.ControllerConstants;
-import com.truextend.problem1.module.common.constant.JsonFieldConstants;
+import com.truextend.problem1.module.common.constant.DtoFieldConstants;
 import com.truextend.problem1.module.common.controller.RestApiController;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -13,7 +13,7 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * Manages the http request for classes.
+ * Manages the http request for clazzes.
  */
 @RestController
 @RequestMapping(ControllerConstants.CLAZZ_URL)
@@ -30,15 +30,15 @@ public class ClazzController extends RestApiController<String, ClazzDto, Clazz> 
     }
 
     /**
-     * Returns the list of ClazzJson field names.
+     * Returns the list of ClazzDto field names.
      *
      * @return the list of fields.
      */
     @Override
-    protected List<String> getJsonFields() {
-        return Arrays.asList(JsonFieldConstants.CLAZZ_CODE,
-                JsonFieldConstants.CLAZZ_TITLE,
-                JsonFieldConstants.CLAZZ_DESCRIPTION);
+    protected List<String> getDtoFields() {
+        return Arrays.asList(DtoFieldConstants.CLAZZ_CODE,
+                DtoFieldConstants.CLAZZ_TITLE,
+                DtoFieldConstants.CLAZZ_DESCRIPTION);
     }
 
     /**

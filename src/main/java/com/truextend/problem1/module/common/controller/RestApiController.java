@@ -1,5 +1,6 @@
 package com.truextend.problem1.module.common.controller;
 
+import com.truextend.problem1.module.common.constant.ControllerConstants;
 import com.truextend.problem1.module.common.exception.BadRequestException;
 import com.truextend.problem1.module.common.service.CrudService;
 import org.springframework.http.HttpStatus;
@@ -27,11 +28,6 @@ import java.util.stream.Collectors;
 public abstract class RestApiController<K, T, U> {
 
     /**
-     * Stores the error message for invalid filters.
-     */
-    private static final String INVALID_FILTER_ERROR = "Invalid filters: %s";
-
-    /**
      * Stores the crud service instance.
      */
     protected CrudService<K, U> modelService;
@@ -40,7 +36,7 @@ public abstract class RestApiController<K, T, U> {
      * HTTP GetAll method.
      *
      * @param queryParams Request query param
-     * @return a list of json
+     * @return a list of dto.
      */
     @GetMapping
     public ResponseEntity<List<T>> getAll(@RequestParam Map<String, String> queryParams) {
@@ -49,23 +45,23 @@ public abstract class RestApiController<K, T, U> {
             throw new BadRequestException(buildErrorMessage(fields));
         }
 
-        List<T> jsonList = modelService.readAll(queryParams)
+        List<T> dtoList = modelService.readAll(queryParams)
                 .stream()
                 .map(this::toDto)
                 .collect(Collectors.toList());
-        return ResponseEntity.ok(jsonList);
+        return ResponseEntity.ok(dtoList);
     }
 
     /**
      * HTTP GetById method.
      *
-     * @param id of selected json.
-     * @return a single json.
+     * @param id of selected dto.
+     * @return a single dto.
      */
     @GetMapping("/{id}")
     public ResponseEntity<T> getById(@PathVariable K id) {
-        T json = toDto(modelService.read(id));
-        return ResponseEntity.ok(json);
+        T dto = toDto(modelService.read(id));
+        return ResponseEntity.ok(dto);
     }
 
     /**
@@ -84,7 +80,7 @@ public abstract class RestApiController<K, T, U> {
     /**
      * HTTP Put method.
      *
-     * @param id   of selected json.
+     * @param id  of selected dto.
      * @param dto to be updated.
      * @return the details of the processed request.
      */
@@ -97,7 +93,7 @@ public abstract class RestApiController<K, T, U> {
     /**
      * HTTP Delete method.
      *
-     * @param id of selected json.
+     * @param id of selected dto.
      * @return the details of the processed request.
      */
     @DeleteMapping("/{id}")
@@ -107,11 +103,11 @@ public abstract class RestApiController<K, T, U> {
     }
 
     /**
-     * Returns the list of json fields.
+     * Returns the list of dto fields.
      *
      * @return the list of fields.
      */
-    protected abstract List<String> getJsonFields();
+    protected abstract List<String> getDtoFields();
 
     /**
      * Converts model to dto.
@@ -136,7 +132,7 @@ public abstract class RestApiController<K, T, U> {
      * @return true if are valid, otherwise false.
      */
     private boolean hasValidFields(Set<String> fields) {
-        return getJsonFields().containsAll(fields);
+        return getDtoFields().containsAll(fields);
     }
 
     /**
@@ -146,8 +142,8 @@ public abstract class RestApiController<K, T, U> {
      * @return the error message.
      */
     private String buildErrorMessage(Set<String> fields) {
-        fields.removeAll(getJsonFields());
-        return String.format(INVALID_FILTER_ERROR, fields.toString());
+        fields.removeAll(getDtoFields());
+        return String.format(ControllerConstants.INVALID_FILTER_ERROR, fields.toString());
     }
 
     /**
