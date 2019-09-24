@@ -1,6 +1,8 @@
 package com.truextend.problem1.integration.student;
 
 import com.truextend.problem1.module.student.service.Student;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,8 +38,21 @@ public class PostStudentTest {
     @Autowired
     private MockMvc mockMvc;
 
+    private Integer studentId;
+
+    @Before
+    public void setup() {
+        studentId = 46;
+    }
+
+    @After
+    public void tearDown() {
+        volatileStudents.remove(studentId);
+    }
+
     @Test
     public void PostStudentEndpoint_WithoutId_ReturnsSuccess() throws Exception {
+        assertFalse(volatileStudents.containsKey(studentId));
         mockMvc.perform(post("/api/students")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("{\"firstName\": \"Carlos\", \"lastName\": \"Estrada\"}"))
@@ -45,43 +60,39 @@ public class PostStudentTest {
                 .andExpect(jsonPath("$.*", hasSize(1)))
                 .andExpect(jsonPath("$.status", is("success")));
 
-        verify(volatileStudents).put(eq(46), any(Student.class));
+        verify(volatileStudents).put(eq(studentId), any(Student.class));
         verify(volatileStudents).keySet();
-        volatileStudents.remove(46);
     }
 
     @Test
     public void PostStudentEndpoint_WithId_ReturnsSuccess() throws Exception {
-        int studentId = 4;
         assertFalse(volatileStudents.containsKey(studentId));
-
         mockMvc.perform(post("/api/students")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content("{\"studentId\": 4, \"firstName\": \"Carlos\", \"lastName\": \"Estrada\"}"))
+                .content(String.format("{\"studentId\": %d, \"firstName\": \"Carlos\", \"lastName\": \"Estrada\"}", studentId)))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.*", hasSize(1)))
                 .andExpect(jsonPath("$.status", is("success")));
 
         verify(volatileStudents).put(eq(studentId), any(Student.class));
         verify(volatileStudents, never()).keySet();
-        volatileStudents.remove(studentId);
     }
 
 
     @Test
-    public void PostStudentEndpoint_WithExistsId_ReturnsBadRequestError() throws Exception {
-        int studentId = 27;
-        assertTrue(volatileStudents.containsKey(studentId));
+    public void PostStudentEndpoint_WithExistingStudentId_ReturnsBadRequestError() throws Exception {
+        int existingStudentId = 27;
+        assertTrue(volatileStudents.containsKey(existingStudentId));
 
         mockMvc.perform(post("/api/students")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content("{\"studentId\": 27, \"firstName\": \"Carlos\", \"lastName\": \"Estrada\"}"))
+                .content(String.format("{\"studentId\": %d, \"firstName\": \"Carlos\", \"lastName\": \"Estrada\"}", existingStudentId)))
                 .andExpect(status().isUnauthorized())
                 .andExpect(jsonPath("$.*", hasSize(2)))
                 .andExpect(jsonPath("$.status", is("error")))
                 .andExpect(jsonPath("$.message", is("Student already exists")));
 
-        verify(volatileStudents, never()).put(eq(studentId), any(Student.class));
+        verify(volatileStudents, never()).put(eq(existingStudentId), any(Student.class));
         verify(volatileStudents, never()).keySet();
     }
 }

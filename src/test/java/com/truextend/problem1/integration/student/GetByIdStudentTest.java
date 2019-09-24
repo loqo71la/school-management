@@ -34,11 +34,11 @@ public class GetByIdStudentTest {
     private MockMvc mockMvc;
 
     @Test
-    public void GetStudentByIdEndpoint_WithValidId_ReturnsTheStudent() throws Exception {
-        int studentId = 45;
+    public void GetStudentByIdEndpoint_WithValidStudentId_ReturnsTheStudent() throws Exception {
+        Integer studentId = 45;
         assertTrue(volatileStudents.containsKey(studentId));
 
-        mockMvc.perform(get("/api/students/" + studentId))
+        mockMvc.perform(get(String.format("/api/students/%d", studentId)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.*", hasSize(3)))
                 .andExpect(jsonPath("$.studentId", is(studentId)))
@@ -49,16 +49,16 @@ public class GetByIdStudentTest {
     }
 
     @Test
-    public void GetStudentByIdEndpoint_WithInvalidId_ReturnsNotFoundError() throws Exception {
-        int studentId = 8;
-        assertFalse(volatileStudents.containsKey(studentId));
+    public void GetStudentByIdEndpoint_WithInvalidStudentId_ReturnsNotFoundError() throws Exception {
+        Integer invalidStudentId = 8;
+        assertFalse(volatileStudents.containsKey(invalidStudentId));
 
-        mockMvc.perform(get("/api/students/" + studentId))
+        mockMvc.perform(get(String.format("/api/students/%d", invalidStudentId)))
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.*", hasSize(2)))
                 .andExpect(jsonPath("$.status", is("error")))
                 .andExpect(jsonPath("$.message", is("Student not found")));
 
-        verify(volatileStudents, never()).get(studentId);
+        verify(volatileStudents, never()).get(invalidStudentId);
     }
 }

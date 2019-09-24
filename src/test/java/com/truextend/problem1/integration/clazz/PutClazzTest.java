@@ -1,7 +1,8 @@
 package com.truextend.problem1.integration.clazz;
 
 import com.truextend.problem1.module.clazz.service.Clazz;
-import com.truextend.problem1.module.student.service.Student;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,14 +38,27 @@ public class PutClazzTest {
     @Autowired
     private MockMvc mockMvc;
 
+    private String clazzCode;
+
+    @Before
+    public void setup() {
+        clazzCode = "1A-192";
+    }
+
+    @After
+    public void tearDown() {
+        volatileClazzes.get(clazzCode)
+                .setTitle("Geology");
+        volatileClazzes.get(clazzCode)
+                .setDescription("Sedimentary Petrology");
+    }
+
     @Test
     public void PutClazzEndpoint_WithoutCodeInThePayload_ReturnsSuccess() throws Exception {
-        String clazzCode = "1A-192";
         assertTrue(volatileClazzes.containsKey(clazzCode));
-
-        mockMvc.perform(put("/api/classes/" + clazzCode)
+        mockMvc.perform(put(String.format("/api/classes/%s", clazzCode))
                 .contentType(MediaType.APPLICATION_JSON)
-                .content("{\"title\": \"Petrology\", \"description\": \"Sedimentary Petrology\"}"))
+                .content("{\"title\": \"Math\", \"description\": \"Mathematical Principles\"}"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.*", hasSize(1)))
                 .andExpect(jsonPath("$.status", is("success")));
@@ -54,12 +68,10 @@ public class PutClazzTest {
 
     @Test
     public void PutClazzEndpoint_WithCodeInThePayload_ReturnsSuccessWithoutModifyTheCode() throws Exception {
-        String clazzCode = "1A-192";
         assertTrue(volatileClazzes.containsKey(clazzCode));
-
-        mockMvc.perform(put("/api/classes/" + clazzCode)
+        mockMvc.perform(put(String.format("/api/classes/%s", clazzCode))
                 .contentType(MediaType.APPLICATION_JSON)
-                .content("{\"code\": \"1S-014\", \"title\": \"Petrology\", \"description\": \"Sedimentary Petrology\"}"))
+                .content("{\"code\": \"6K-014\", \"title\": \"Math\", \"description\": \"Mathematical Principles\"}"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.*", hasSize(1)))
                 .andExpect(jsonPath("$.status", is("success")));
@@ -68,18 +80,17 @@ public class PutClazzTest {
     }
 
     @Test
-    public void PutClazzEndpoint_WithInvalidCode_ReturnsNotFoundError() throws Exception {
-        String clazzCode = "1H-104";
-        assertFalse(volatileClazzes.containsKey(clazzCode));
-
-        mockMvc.perform(put("/api/classes/" + clazzCode)
+    public void PutClazzEndpoint_WithInvalidClazzCode_ReturnsNotFoundError() throws Exception {
+        String invalidClazzCode = "1H-104";
+        assertFalse(volatileClazzes.containsKey(invalidClazzCode));
+        mockMvc.perform(put(String.format("/api/classes/%s", invalidClazzCode))
                 .contentType(MediaType.APPLICATION_JSON)
-                .content("{\"title\": \"Petrology\", \"description\": \"Sedimentary Petrology\"}"))
+                .content("{\"title\": \"Math\", \"description\": \"Mathematical Principles\"}"))
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.*", hasSize(2)))
                 .andExpect(jsonPath("$.status", is("error")))
                 .andExpect(jsonPath("$.message", is("Class not found")));
 
-        verify(volatileClazzes, never()).put(eq(clazzCode), any(Clazz.class));
+        verify(volatileClazzes, never()).put(eq(invalidClazzCode), any(Clazz.class));
     }
 }

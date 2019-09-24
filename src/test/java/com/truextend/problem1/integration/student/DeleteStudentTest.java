@@ -1,6 +1,8 @@
 package com.truextend.problem1.integration.student;
 
 import com.truextend.problem1.module.student.service.Student;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +17,6 @@ import java.util.Map;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -32,29 +33,42 @@ public class DeleteStudentTest {
     @Autowired
     private MockMvc mockMvc;
 
-    @Test
-    public void DeleteStudentEndpoint_WithValidId_ReturnsSuccess() throws Exception {
-        Student student = new Student();
-        student.setId(289);
-        volatileStudents.put(student.getId(), student);
-        assertTrue(volatileStudents.containsKey(student.getId()));
+    private Integer studentId;
 
-        mockMvc.perform(delete("/api/students/" + student.getId()))
+    @Before
+    public void setup() {
+        studentId = 289;
+
+        Student student = new Student();
+        student.setId(studentId);
+        volatileStudents.put(studentId, student);
+    }
+
+    @After
+    public void tearDown() {
+        volatileStudents.remove(studentId);
+    }
+
+    @Test
+    public void DeleteStudentEndpoint_WithValidStudentId_ReturnsSuccess() throws Exception {
+        mockMvc.perform(delete(String.format("/api/students/%d", studentId)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.*", hasSize(1)))
                 .andExpect(jsonPath("$.status", is("success")));
-        verify(volatileStudents).remove(student.getId());
+
+        verify(volatileStudents).remove(studentId);
     }
 
     @Test
     public void DeleteStudentEndpoint_WithInvalidId_ReturnsSuccess() throws Exception {
-        int studentId = 192;
-        assertFalse(volatileStudents.containsKey(studentId));
+        int invalidStudentId = 192;
+        assertFalse(volatileStudents.containsKey(invalidStudentId));
 
-        mockMvc.perform(delete("/api/students/" + studentId))
+        mockMvc.perform(delete(String.format("/api/students/%d", invalidStudentId)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.*", hasSize(1)))
                 .andExpect(jsonPath("$.status", is("success")));
-        verify(volatileStudents).remove(studentId);
+
+        verify(volatileStudents).remove(invalidStudentId);
     }
 }

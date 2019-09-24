@@ -35,12 +35,16 @@ public class GetAllClazzTest {
     public void GetAllClazzEndpoint_WithoutFilters_ReturnsTheClazzList() throws Exception {
         mockMvc.perform(get("/api/classes"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].code", is("3C-014")))
-                .andExpect(jsonPath("$[0].title", is("Art of Listening")))
-                .andExpect(jsonPath("$[0].description", is("Art of Listening")))
-                .andExpect(jsonPath("$[1].code", is("1A-192")))
-                .andExpect(jsonPath("$[1].title", is("Petrology")))
-                .andExpect(jsonPath("$[1].description", is("Sedimentary Petrology")));
+                .andExpect(jsonPath("$", hasSize(3)))
+                .andExpect(jsonPath("$[0].code", is("1A-192")))
+                .andExpect(jsonPath("$[0].title", is("Geology")))
+                .andExpect(jsonPath("$[0].description", is("Sedimentary Petrology")))
+                .andExpect(jsonPath("$[1].code", is("2B-032")))
+                .andExpect(jsonPath("$[1].title", is("Engineering")))
+                .andExpect(jsonPath("$[1].description", is("Principles of computational geo-location analysis")))
+                .andExpect(jsonPath("$[2].code", is("3C-014")))
+                .andExpect(jsonPath("$[2].title", is("Music")))
+                .andExpect(jsonPath("$[2].description", is("Art of Listening")));
 
         verify(volatileClazzes).values();
     }
@@ -58,10 +62,11 @@ public class GetAllClazzTest {
 
     @Test
     public void GetAllClazzEndpoint_WithValidFilters_ReturnsTheClazzList() throws Exception {
-        mockMvc.perform(get("/api/classes?title=art"))
+        mockMvc.perform(get("/api/classes?description=art"))
                 .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(1)))
                 .andExpect(jsonPath("$[0].code", is("3C-014")))
-                .andExpect(jsonPath("$[0].title", is("Art of Listening")))
+                .andExpect(jsonPath("$[0].title", is("Music")))
                 .andExpect(jsonPath("$[0].description", is("Art of Listening")));
 
         verify(volatileClazzes).values();

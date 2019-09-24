@@ -1,7 +1,7 @@
 package com.truextend.problem1.module.student.controller;
 
 import com.truextend.problem1.module.common.constant.ControllerConstants;
-import com.truextend.problem1.module.common.constant.JsonFieldConstants;
+import com.truextend.problem1.module.common.constant.DtoFieldConstants;
 import com.truextend.problem1.module.common.controller.RestApiController;
 import com.truextend.problem1.module.student.service.Student;
 import com.truextend.problem1.module.student.service.StudentVolatileService;
@@ -30,15 +30,15 @@ public class StudentController extends RestApiController<Integer, StudentDto, St
     }
 
     /**
-     * Returns the list of StudentJson field names.
+     * Returns the list of StudentDto field names.
      *
      * @return the list of fields.
      */
     @Override
-    protected List<String> getJsonFields() {
-        return Arrays.asList(JsonFieldConstants.STUDENT_ID,
-                JsonFieldConstants.STUDENT_NAME,
-                JsonFieldConstants.STUDENT_LAST_NAME);
+    protected List<String> getDtoFields() {
+        return Arrays.asList(DtoFieldConstants.STUDENT_ID,
+                DtoFieldConstants.STUDENT_NAME,
+                DtoFieldConstants.STUDENT_LAST_NAME);
     }
 
     /**

@@ -1,6 +1,6 @@
 package com.truextend.problem1.module.student.service;
 
-import com.truextend.problem1.module.common.constant.JsonFieldConstants;
+import com.truextend.problem1.module.common.constant.DtoFieldConstants;
 import com.truextend.problem1.module.common.service.VolatileService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -41,6 +41,24 @@ public class StudentVolatileService extends VolatileService<Integer, Student> {
     }
 
     @Override
+    public boolean match(Student student, Map<String, String> queryParams) {
+        boolean isMatchedName = Boolean.FALSE;
+        if (queryParams.containsKey(DtoFieldConstants.STUDENT_NAME)) {
+            isMatchedName = student.getName()
+                    .toLowerCase()
+                    .contains(queryParams.get(DtoFieldConstants.STUDENT_NAME));
+        }
+
+        boolean isMatchedLastName = Boolean.FALSE;
+        if (queryParams.containsKey(DtoFieldConstants.STUDENT_LAST_NAME)) {
+            isMatchedLastName = student.getLastName()
+                    .toLowerCase()
+                    .contains(queryParams.get(DtoFieldConstants.STUDENT_LAST_NAME));
+        }
+        return isMatchedName || isMatchedLastName;
+    }
+
+    @Override
     protected Integer findLastId() {
         int lastId = super.volatileData
                 .keySet()
@@ -48,23 +66,5 @@ public class StudentVolatileService extends VolatileService<Integer, Student> {
                 .max(comparing(id -> id))
                 .orElse(super.volatileData.size());
         return ++lastId;
-    }
-
-    @Override
-    protected boolean match(Student student, Map<String, String> queryParams) {
-        boolean isMatchedName = Boolean.FALSE;
-        if (queryParams.containsKey(JsonFieldConstants.STUDENT_NAME)) {
-            isMatchedName = student.getName()
-                    .toLowerCase()
-                    .contains(queryParams.get(JsonFieldConstants.STUDENT_NAME));
-        }
-
-        boolean isMatchedLastName = Boolean.FALSE;
-        if (queryParams.containsKey(JsonFieldConstants.STUDENT_LAST_NAME)) {
-            isMatchedLastName = student.getLastName()
-                    .toLowerCase()
-                    .contains(queryParams.get(JsonFieldConstants.STUDENT_LAST_NAME));
-        }
-        return isMatchedName || isMatchedLastName;
     }
 }

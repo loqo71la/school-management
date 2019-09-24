@@ -1,6 +1,6 @@
 package com.truextend.problem1.module.clazz.service;
 
-import com.truextend.problem1.module.common.constant.JsonFieldConstants;
+import com.truextend.problem1.module.common.constant.DtoFieldConstants;
 import com.truextend.problem1.module.common.service.VolatileService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -56,6 +56,24 @@ public class ClazzVolatileService extends VolatileService<String, Clazz> {
     }
 
     @Override
+    public boolean match(Clazz clazz, Map<String, String> queryParams) {
+        boolean isMatchedTitle = Boolean.FALSE;
+        if (queryParams.containsKey(DtoFieldConstants.CLAZZ_TITLE)) {
+            isMatchedTitle = clazz.getTitle()
+                    .toLowerCase()
+                    .contains(queryParams.get(DtoFieldConstants.CLAZZ_TITLE));
+        }
+
+        boolean isMatchedDescription = Boolean.FALSE;
+        if (queryParams.containsKey(DtoFieldConstants.CLAZZ_DESCRIPTION)) {
+            isMatchedDescription = clazz.getDescription()
+                    .toLowerCase()
+                    .contains(queryParams.get(DtoFieldConstants.CLAZZ_DESCRIPTION));
+        }
+        return isMatchedTitle || isMatchedDescription;
+    }
+
+    @Override
     protected String findLastId() {
         String lastId = super.volatileData
                 .keySet()
@@ -64,23 +82,5 @@ public class ClazzVolatileService extends VolatileService<String, Clazz> {
                 .orElse(DEFAULT_CLAZZ_CODE);
         int room = Integer.parseInt(lastId.substring(THREE));
         return String.format(CLAZZ_CODE_TEMPLATE, lastId.substring(0, THREE - 1), ++room);
-    }
-
-    @Override
-    protected boolean match(Clazz clazz, Map<String, String> queryParams) {
-        boolean isMatchedTitle = Boolean.FALSE;
-        if (queryParams.containsKey(JsonFieldConstants.CLAZZ_TITLE)) {
-            isMatchedTitle = clazz.getTitle()
-                    .toLowerCase()
-                    .contains(queryParams.get(JsonFieldConstants.CLAZZ_TITLE));
-        }
-
-        boolean isMatchedDescription = Boolean.FALSE;
-        if (queryParams.containsKey(JsonFieldConstants.CLAZZ_DESCRIPTION)) {
-            isMatchedDescription = clazz.getDescription()
-                    .toLowerCase()
-                    .contains(queryParams.get(JsonFieldConstants.CLAZZ_DESCRIPTION));
-        }
-        return isMatchedTitle || isMatchedDescription;
     }
 }

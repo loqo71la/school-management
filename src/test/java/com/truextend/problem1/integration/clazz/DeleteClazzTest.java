@@ -1,6 +1,8 @@
 package com.truextend.problem1.integration.clazz;
 
 import com.truextend.problem1.module.clazz.service.Clazz;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +17,6 @@ import java.util.Map;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -32,31 +33,42 @@ public class DeleteClazzTest {
     @Autowired
     private MockMvc mockMvc;
 
-    @Test
-    public void DeleteClazzEndpoint_WithValidCode_ReturnsSuccess() throws Exception {
+    private String clazzCode;
+
+    @Before
+    public void setup() {
+        clazzCode = "3A-189";
+
         Clazz clazz = new Clazz();
-        clazz.setId("3A-189");
-        volatileClazzes.put(clazz.getId(), clazz);
-        assertTrue(volatileClazzes.containsKey(clazz.getId()));
+        clazz.setId(clazzCode);
+        volatileClazzes.put(clazzCode, clazz);
+    }
 
-        mockMvc.perform(delete("/api/classes/" + clazz.getId()))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.*", hasSize(1)))
-                .andExpect(jsonPath("$.status", is("success")));
-
-        verify(volatileClazzes).remove(clazz.getId());
+    @After
+    public void tearDown() {
+        volatileClazzes.remove(clazzCode);
     }
 
     @Test
-    public void DeleteClazzEndpoint_WithInvalidCode_ReturnsSuccess() throws Exception {
-        String clazzCode = "1F-192";
-        assertFalse(volatileClazzes.containsKey(clazzCode));
-
-        mockMvc.perform(delete("/api/classes/" + clazzCode))
+    public void DeleteClazzEndpoint_WithValidClazzCode_ReturnsSuccess() throws Exception {
+        mockMvc.perform(delete(String.format("/api/classes/%s", clazzCode)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.*", hasSize(1)))
                 .andExpect(jsonPath("$.status", is("success")));
 
         verify(volatileClazzes).remove(clazzCode);
+    }
+
+    @Test
+    public void DeleteClazzEndpoint_WithInvalidClazzCode_ReturnsSuccess() throws Exception {
+        String invalidClazzCode = "1F-192";
+        assertFalse(volatileClazzes.containsKey(invalidClazzCode));
+
+        mockMvc.perform(delete(String.format("/api/classes/%s", invalidClazzCode)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.*", hasSize(1)))
+                .andExpect(jsonPath("$.status", is("success")));
+
+        verify(volatileClazzes).remove(invalidClazzCode);
     }
 }
