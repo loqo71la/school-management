@@ -21,7 +21,7 @@ java -jar build/libs/problem1-0.0.1-SNAPSHOT.jar
 
 ## Students
 
-### GET `/api/studets` status: `200 OK`
+### GET `/api/students` status: `200 OK`
 _Returns the list of all students_
 ```
 [
@@ -40,7 +40,7 @@ _Returns the list of all students_
 ]
 ```
 
-### GET `/api/studets?firstName=pam` status: `200 OK`
+### GET `/api/students?firstName=pam` status: `200 OK`
 _Returns the list of students with specific params_
 ```
 [
@@ -52,7 +52,7 @@ _Returns the list of students with specific params_
 ]
 ```
 
-###GET `/api/studets?age=14` status: `400 Bad Request`
+###GET `/api/students?age=14` status: `400 Bad Request`
 _Returns an error with invalid params_
 ```
 {
@@ -61,7 +61,7 @@ _Returns an error with invalid params_
 }
 ```
 
-### GET `/api/studets/{id}` status: `200 OK`
+### GET `/api/students/{id}` status: `200 OK`
 _Returns single student_
 ```
 {
@@ -71,7 +71,7 @@ _Returns single student_
 }
 ```
 
-### GET `/api/studets/{id}` status: `404 Not Found`
+### GET `/api/students/{id}` status: `404 Not Found`
 _Returns an error when the student is not found_
 ```
 {
@@ -80,7 +80,7 @@ _Returns an error when the student is not found_
 }
 ```
 
-### POST `/api/studets` status: `201 Created`
+### POST `/api/students` status: `201 Created`
 _Returns the success info when the student was created_
 ```
 {
@@ -88,7 +88,7 @@ _Returns the success info when the student was created_
 }
 ```
 
-### POST `/api/studets` status: `401 Unauthorized`
+### POST `/api/students` status: `401 Unauthorized`
 _Returns an error when the student already exists_
 ```
 {
@@ -97,7 +97,7 @@ _Returns an error when the student already exists_
 }
 ```
 
-### PUT `/api/studets/{id}` status: `200 OK`
+### PUT `/api/students/{id}` status: `200 OK`
 _Returns the success info when the student was updated_
 ```
 {
@@ -105,7 +105,7 @@ _Returns the success info when the student was updated_
 }
 ```
 
-### PUT `/api/studets` status: `404 Not Found`
+### PUT `/api/students` status: `404 Not Found`
 _Returns an error when the student is not found_
 ```
 {
@@ -114,7 +114,7 @@ _Returns an error when the student is not found_
 }
 ```
 
-### DELETE `/api/studets/{id}` status: `200 OK`
+### DELETE `/api/students/{id}` status: `200 OK`
 _Returns the success info when the student was removed_
 ```
 {
@@ -307,7 +307,7 @@ _Returns an error when the student is not found_
 
 ## Classes by Student
 
-### GET `/api/student/{id}/classes` status: `200 OK`
+### GET `/api/students/{id}/classes` status: `200 OK`
 _Returns the list of all classes for specific student_
 ```
 [
@@ -326,7 +326,7 @@ _Returns the list of all classes for specific student_
 ]
 
 ```
-### GET `/api/student/{id}/classes` status: `404 Not Found`
+### GET `/api/students/{id}/classes` status: `404 Not Found`
 _Returns an error when the student is not found_
 ```
 {
@@ -335,7 +335,7 @@ _Returns an error when the student is not found_
 }
 ```
 
-### GET `/api/student/{id}/classes?lastName=collin` status: `200 OK`
+### GET `/api/students/{id}/classes?lastName=collin` status: `200 OK`
 _Returns the list of classes with specific params_
 ```
 [
@@ -347,7 +347,7 @@ _Returns the list of classes with specific params_
 ]
 ```
 
-### GET `/api/student/{id}/classes?age=72` status: `400 Bad Request`
+### GET `/api/students/{id}/classes?age=72` status: `400 Bad Request`
 _Returns an error with invalid params_
 ```
 {
@@ -356,7 +356,7 @@ _Returns an error with invalid params_
 }
 ```
 
-### PUT `/api/student/{id}/classes/{code}` status: `200 OK`
+### PUT `/api/students/{id}/classes/{code}` status: `200 OK`
 _Returns the success info when the student was added to the class_
 ```
 {
@@ -364,7 +364,7 @@ _Returns the success info when the student was added to the class_
 }
 ```
 
-### PUT `/api/student/{id}/classes/{code}` status: `404 Not Found`
+### PUT `/api/students/{id}/classes/{code}` status: `404 Not Found`
 
 _Returns an error when the student is not found_
 ```
@@ -374,7 +374,7 @@ _Returns an error when the student is not found_
 }
 ```
 
-### PUT `/api/student/{id}/classes/{code}` status: `404 Not Found`
+### PUT `/api/students/{id}/classes/{code}` status: `404 Not Found`
 
 _Returns an error when the class is not found_
 ```

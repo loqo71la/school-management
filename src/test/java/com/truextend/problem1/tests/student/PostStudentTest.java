@@ -1,6 +1,6 @@
-package com.truextend.problem1.integration.clazz;
+package com.truextend.problem1.tests.student;
 
-import com.truextend.problem1.module.clazz.service.Clazz;
+import com.truextend.problem1.module.student.service.Student;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -30,67 +30,69 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @AutoConfigureMockMvc
-public class PostClazzTest {
+public class PostStudentTest {
 
     @SpyBean
-    private Map<String, Clazz> volatileClazzes;
+    private Map<Integer, Student> volatileStudents;
 
     @Autowired
     private MockMvc mockMvc;
 
-    private String clazzCode;
+    private Integer studentId;
 
     @Before
     public void setup() {
-        clazzCode = "3C-015";
+        studentId = 46;
     }
 
     @After
     public void tearDown() {
-        volatileClazzes.remove(clazzCode);
+        volatileStudents.remove(studentId);
     }
 
     @Test
-    public void PostClazzEndpoint_WithoutCode_ReturnsSuccess() throws Exception {
-        assertFalse(volatileClazzes.containsKey(clazzCode));
-        mockMvc.perform(post("/api/classes")
+    public void PostStudentEndpoint_WithoutId_ReturnsSuccess() throws Exception {
+        assertFalse(volatileStudents.containsKey(studentId));
+        mockMvc.perform(post("/api/students")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content("{\"title\": \"Art Hitory\", \"description\": \"Art Hitory\"}"))
+                .content("{\"firstName\": \"Carlos\", \"lastName\": \"Estrada\"}"))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.*", hasSize(1)))
                 .andExpect(jsonPath("$.status", is("success")));
 
-        verify(volatileClazzes).put(eq(clazzCode), any(Clazz.class));
-        verify(volatileClazzes).keySet();
+        verify(volatileStudents).put(eq(studentId), any(Student.class));
+        verify(volatileStudents).keySet();
     }
 
     @Test
-    public void PostClazzEndpoint_WithCode_ReturnsSuccess() throws Exception {
-        assertFalse(volatileClazzes.containsKey(clazzCode));
-        mockMvc.perform(post("/api/classes")
+    public void PostStudentEndpoint_WithId_ReturnsSuccess() throws Exception {
+        assertFalse(volatileStudents.containsKey(studentId));
+        mockMvc.perform(post("/api/students")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(String.format("{\"code\": \"%s\", \"title\": \"Art Hitory\", \"description\": \"Art Hitory\"}", clazzCode)))
+                .content(String.format("{\"studentId\": %d, \"firstName\": \"Carlos\", \"lastName\": \"Estrada\"}", studentId)))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.*", hasSize(1)))
                 .andExpect(jsonPath("$.status", is("success")));
 
-        verify(volatileClazzes).put(eq(clazzCode), any(Clazz.class));
-        verify(volatileClazzes, never()).keySet();
+        verify(volatileStudents).put(eq(studentId), any(Student.class));
+        verify(volatileStudents, never()).keySet();
     }
 
+
     @Test
-    public void PostClazzEndpoint_WithExistingClazzCode_ReturnsBadRequestError() throws Exception {
-        String existingClazzCode = "1A-192";
-        assertTrue(volatileClazzes.containsKey(existingClazzCode));
-        mockMvc.perform(post("/api/classes")
+    public void PostStudentEndpoint_WithExistingStudentId_ReturnsBadRequestError() throws Exception {
+        int existingStudentId = 27;
+        assertTrue(volatileStudents.containsKey(existingStudentId));
+
+        mockMvc.perform(post("/api/students")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(String.format("{\"code\": \"%s\", \"title\": \"Art Hitory\", \"description\": \"Art Hitory\"}", existingClazzCode)))
+                .content(String.format("{\"studentId\": %d, \"firstName\": \"Carlos\", \"lastName\": \"Estrada\"}", existingStudentId)))
                 .andExpect(status().isUnauthorized())
                 .andExpect(jsonPath("$.*", hasSize(2)))
                 .andExpect(jsonPath("$.status", is("error")))
-                .andExpect(jsonPath("$.message", is("Class already exists")));
+                .andExpect(jsonPath("$.message", is("Student already exists")));
 
-        verify(volatileClazzes, never()).put(eq(existingClazzCode), any(Clazz.class));
-        verify(volatileClazzes, never()).keySet();
+        verify(volatileStudents, never()).put(eq(existingStudentId), any(Student.class));
+        verify(volatileStudents, never()).keySet();
     }
 }
