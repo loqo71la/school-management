@@ -1,9 +1,6 @@
-package com.truextend.problem1.integration.clazz;
+package com.truextend.problem1.tests.student;
 
-import com.truextend.problem1.module.clazz.service.Clazz;
 import com.truextend.problem1.module.student.service.Student;
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,40 +25,40 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @AutoConfigureMockMvc
-public class GetByIdClazzTest {
+public class GetByIdStudentTest {
 
     @SpyBean
-    private Map<String, Clazz> volatileClazzes;
+    private Map<Integer, Student> volatileStudents;
 
     @Autowired
     private MockMvc mockMvc;
 
     @Test
-    public void GetClazzByCodeEndpoint_WithValidClazzCode_ReturnsAClazz() throws Exception {
-        String clazzCode = "3C-014";
-        assertTrue(volatileClazzes.containsKey(clazzCode));
+    public void GetStudentByIdEndpoint_WithValidStudentId_ReturnsTheStudent() throws Exception {
+        Integer studentId = 45;
+        assertTrue(volatileStudents.containsKey(studentId));
 
-        mockMvc.perform(get(String.format("/api/classes/%s", clazzCode)))
+        mockMvc.perform(get(String.format("/api/students/%d", studentId)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.*", hasSize(3)))
-                .andExpect(jsonPath("$.code", is(clazzCode)))
-                .andExpect(jsonPath("$.title", is("Music")))
-                .andExpect(jsonPath("$.description", is("Art of Listening")));
+                .andExpect(jsonPath("$.studentId", is(studentId)))
+                .andExpect(jsonPath("$.firstName", is("John")))
+                .andExpect(jsonPath("$.lastName", is("Wilson")));
 
-        verify(volatileClazzes).get(clazzCode);
+        verify(volatileStudents).get(studentId);
     }
 
     @Test
-    public void GetClazzByCodeEndpoint_WithInvalidClazzCode_ReturnsNotFoundError() throws Exception {
-        String invalidClazzCode = "8C-718";
-        assertFalse(volatileClazzes.containsKey(invalidClazzCode));
+    public void GetStudentByIdEndpoint_WithInvalidStudentId_ReturnsNotFoundError() throws Exception {
+        Integer invalidStudentId = 8;
+        assertFalse(volatileStudents.containsKey(invalidStudentId));
 
-        mockMvc.perform(get(String.format("/api/classes/%s", invalidClazzCode)))
+        mockMvc.perform(get(String.format("/api/students/%d", invalidStudentId)))
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.*", hasSize(2)))
                 .andExpect(jsonPath("$.status", is("error")))
-                .andExpect(jsonPath("$.message", is("Class not found")));
+                .andExpect(jsonPath("$.message", is("Student not found")));
 
-        verify(volatileClazzes, never()).get(invalidClazzCode);
+        verify(volatileStudents, never()).get(invalidStudentId);
     }
 }

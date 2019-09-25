@@ -1,4 +1,4 @@
-package com.truextend.problem1.integration.student;
+package com.truextend.problem1.tests.student;
 
 import com.truextend.problem1.module.student.service.Student;
 import org.junit.After;
@@ -23,14 +23,14 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @AutoConfigureMockMvc
-public class PostStudentTest {
+public class PutStudentTest {
 
     @SpyBean
     private Map<Integer, Student> volatileStudents;
@@ -42,57 +42,56 @@ public class PostStudentTest {
 
     @Before
     public void setup() {
-        studentId = 46;
+        studentId = 5;
     }
 
     @After
     public void tearDown() {
-        volatileStudents.remove(studentId);
+        volatileStudents.get(studentId)
+                .setName("Jane");
+        volatileStudents.get(studentId)
+                .setLastName("Graham");
     }
 
     @Test
-    public void PostStudentEndpoint_WithoutId_ReturnsSuccess() throws Exception {
-        assertFalse(volatileStudents.containsKey(studentId));
-        mockMvc.perform(post("/api/students")
+    public void PutStudentEndpoint_WithoutIdInThePayload_ReturnsSuccess() throws Exception {
+        assertTrue(volatileStudents.containsKey(studentId));
+        mockMvc.perform(put(String.format("/api/students/%d", studentId))
                 .contentType(MediaType.APPLICATION_JSON)
-                .content("{\"firstName\": \"Carlos\", \"lastName\": \"Estrada\"}"))
-                .andExpect(status().isCreated())
+                .content("{\"firstName\": \"Jane\", \"lastName\": \"Bam\"}"))
+                .andExpect(status().isOk())
                 .andExpect(jsonPath("$.*", hasSize(1)))
                 .andExpect(jsonPath("$.status", is("success")));
 
         verify(volatileStudents).put(eq(studentId), any(Student.class));
-        verify(volatileStudents).keySet();
     }
 
     @Test
-    public void PostStudentEndpoint_WithId_ReturnsSuccess() throws Exception {
-        assertFalse(volatileStudents.containsKey(studentId));
-        mockMvc.perform(post("/api/students")
+    public void PutStudentEndpoint_WithIdInThePayload_ReturnsSuccessWithoutModifyTheId() throws Exception {
+        assertTrue(volatileStudents.containsKey(studentId));
+        mockMvc.perform(put(String.format("/api/students/%d", studentId))
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(String.format("{\"studentId\": %d, \"firstName\": \"Carlos\", \"lastName\": \"Estrada\"}", studentId)))
-                .andExpect(status().isCreated())
+                .content(String.format("{\"studentId\": %d, \"firstName\": \"Jane\", \"lastName\": \"Bam\"}", studentId)))
+                .andExpect(status().isOk())
                 .andExpect(jsonPath("$.*", hasSize(1)))
                 .andExpect(jsonPath("$.status", is("success")));
 
         verify(volatileStudents).put(eq(studentId), any(Student.class));
-        verify(volatileStudents, never()).keySet();
     }
 
-
     @Test
-    public void PostStudentEndpoint_WithExistingStudentId_ReturnsBadRequestError() throws Exception {
-        int existingStudentId = 27;
-        assertTrue(volatileStudents.containsKey(existingStudentId));
+    public void PutStudentEndpoint_WithInvalidId_ReturnsNotFoundError() throws Exception {
+        int studentId = 8;
+        assertFalse(volatileStudents.containsKey(studentId));
 
-        mockMvc.perform(post("/api/students")
+        mockMvc.perform(put(String.format("/api/students/%d", studentId))
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(String.format("{\"studentId\": %d, \"firstName\": \"Carlos\", \"lastName\": \"Estrada\"}", existingStudentId)))
-                .andExpect(status().isUnauthorized())
+                .content("{\"name\": \"Pam\", \"lastName\": \"Bam\"}"))
+                .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.*", hasSize(2)))
                 .andExpect(jsonPath("$.status", is("error")))
-                .andExpect(jsonPath("$.message", is("Student already exists")));
+                .andExpect(jsonPath("$.message", is("Student not found")));
 
-        verify(volatileStudents, never()).put(eq(existingStudentId), any(Student.class));
-        verify(volatileStudents, never()).keySet();
+        verify(volatileStudents, never()).put(eq(studentId), any(Student.class));
     }
 }

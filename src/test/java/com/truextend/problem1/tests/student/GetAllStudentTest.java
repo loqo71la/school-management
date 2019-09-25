@@ -1,4 +1,4 @@
-package com.truextend.problem1.integration.student;
+package com.truextend.problem1.tests.student;
 
 import com.truextend.problem1.module.student.service.Student;
 import org.junit.Test;

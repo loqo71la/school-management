@@ -1,4 +1,4 @@
-package com.truextend.problem1.integration.clazz;
+package com.truextend.problem1.tests.clazz;
 
 import com.truextend.problem1.module.clazz.service.Clazz;
 import org.junit.After;

@@ -1,4 +1,4 @@
-package com.truextend.problem1.handler;
+package com.truextend.problem1.exceptionhandler;
 
 import com.truextend.problem1.module.common.controller.ResultInfo;
 import com.truextend.problem1.module.common.controller.ResultStatus;
