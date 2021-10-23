@@ -1,28 +1,23 @@
 plugins {
-    id 'org.springframework.boot' version '2.1.7.RELEASE'
-    id 'io.spring.dependency-management' version '1.0.8.RELEASE'
+    id 'org.springframework.boot' version '2.5.5'
+    id 'io.spring.dependency-management' version '1.0.11.RELEASE'
     id 'java'
 }
 
-group = 'com.truextend'
+group = 'com.tx'
 version = '0.0.1-SNAPSHOT'
-
-sourceCompatibility = JavaVersion.VERSION_1_8
-sourceCompatibility = JavaVersion.VERSION_1_8
+sourceCompatibility = '17'
 
 repositories {
     mavenCentral()
 }
 
-test {
-    testLogging {
-        events "passed", "skipped", "failed"
-    }
-}
-
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter'
     implementation 'org.springframework.boot:spring-boot-starter-web'
-
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
+}
+
+test {
+    useJUnitPlatform()
 }
