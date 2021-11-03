@@ -1,16 +1,17 @@
 package com.tx.schoolmanagement.module.clazz.service;
 
+import com.tx.schoolmanagement.module.clazz.repository.Clazz;
 import com.tx.schoolmanagement.module.common.constant.DtoFieldConstants;
 import com.tx.schoolmanagement.module.common.service.VolatileService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.Map;
 
 import static java.util.Comparator.comparing;
 
-@Service
-public class ClazzVolatileService extends VolatileService<String, Clazz> {
+public class ClazzVolatileService extends VolatileService<String, Clazz> implements ClazzService {
 
     /**
      * Stores the error message for unauthorized.
@@ -60,15 +61,15 @@ public class ClazzVolatileService extends VolatileService<String, Clazz> {
         boolean isMatchedTitle = Boolean.FALSE;
         if (queryParams.containsKey(DtoFieldConstants.CLAZZ_TITLE)) {
             isMatchedTitle = clazz.getTitle()
-                    .toLowerCase()
-                    .contains(queryParams.get(DtoFieldConstants.CLAZZ_TITLE));
+                .toLowerCase()
+                .contains(queryParams.get(DtoFieldConstants.CLAZZ_TITLE));
         }
 
         boolean isMatchedDescription = Boolean.FALSE;
         if (queryParams.containsKey(DtoFieldConstants.CLAZZ_DESCRIPTION)) {
             isMatchedDescription = clazz.getDescription()
-                    .toLowerCase()
-                    .contains(queryParams.get(DtoFieldConstants.CLAZZ_DESCRIPTION));
+                .toLowerCase()
+                .contains(queryParams.get(DtoFieldConstants.CLAZZ_DESCRIPTION));
         }
         return isMatchedTitle || isMatchedDescription;
     }
@@ -76,11 +77,26 @@ public class ClazzVolatileService extends VolatileService<String, Clazz> {
     @Override
     protected String findLastId() {
         String lastId = super.volatileData
-                .keySet()
-                .stream()
-                .max(comparing(id -> id))
-                .orElse(DEFAULT_CLAZZ_CODE);
+            .keySet()
+            .stream()
+            .max(comparing(id -> id))
+            .orElse(DEFAULT_CLAZZ_CODE);
         int room = Integer.parseInt(lastId.substring(THREE));
         return String.format(CLAZZ_CODE_TEMPLATE, lastId.substring(0, THREE - 1), ++room);
+    }
+
+    @Override
+    public Page<Clazz> readAllByStudent(String studentId, Map<String, String> queryParams, Pageable pageable) {
+        return null;
+    }
+
+    @Override
+    public void assignStudent(String clazzCode, String studentId) {
+
+    }
+
+    @Override
+    public void unassignStudent(String clazzCode, String studentId) {
+
     }
 }

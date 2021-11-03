@@ -2,15 +2,16 @@ package com.tx.schoolmanagement.module.student.service;
 
 import com.tx.schoolmanagement.module.common.constant.DtoFieldConstants;
 import com.tx.schoolmanagement.module.common.service.VolatileService;
+import com.tx.schoolmanagement.module.student.repository.Student;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.Map;
 
 import static java.util.Comparator.comparing;
 
-@Service
-public class StudentVolatileService extends VolatileService<Integer, Student> {
+public class StudentVolatileService extends VolatileService<String, Student> implements StudentService {
 
     /**
      * Stores the error message for unauthorized.
@@ -36,7 +37,7 @@ public class StudentVolatileService extends VolatileService<Integer, Student> {
      * @param volatileStudents to be set.
      */
     @Autowired
-    public void setVolatileStudents(Map<Integer, Student> volatileStudents) {
+    public void setVolatileStudents(Map<String, Student> volatileStudents) {
         super.volatileData = volatileStudents;
     }
 
@@ -45,26 +46,39 @@ public class StudentVolatileService extends VolatileService<Integer, Student> {
         boolean isMatchedName = Boolean.FALSE;
         if (queryParams.containsKey(DtoFieldConstants.STUDENT_NAME)) {
             isMatchedName = student.getName()
-                    .toLowerCase()
-                    .contains(queryParams.get(DtoFieldConstants.STUDENT_NAME));
+                .toLowerCase()
+                .contains(queryParams.get(DtoFieldConstants.STUDENT_NAME));
         }
 
-        boolean isMatchedLastName = Boolean.FALSE;
+        boolean isMatchedLastname = Boolean.FALSE;
         if (queryParams.containsKey(DtoFieldConstants.STUDENT_LAST_NAME)) {
-            isMatchedLastName = student.getLastName()
-                    .toLowerCase()
-                    .contains(queryParams.get(DtoFieldConstants.STUDENT_LAST_NAME));
+            isMatchedLastname = student.getLastname()
+                .toLowerCase()
+                .contains(queryParams.get(DtoFieldConstants.STUDENT_LAST_NAME));
         }
-        return isMatchedName || isMatchedLastName;
+        return isMatchedName || isMatchedLastname;
     }
 
     @Override
-    protected Integer findLastId() {
-        int lastId = super.volatileData
-                .keySet()
-                .stream()
-                .max(comparing(id -> id))
-                .orElse(super.volatileData.size());
-        return ++lastId;
+    protected String findLastId() {
+        String lastId = super.volatileData
+            .keySet()
+            .stream()
+            .max(comparing(id -> id))
+            .orElse(String.valueOf(super.volatileData.size()));
+        return lastId;
+    }
+
+    @Override
+    public void assignClazz(String studentId, String clazzCode) {
+    }
+
+    @Override
+    public void unassignClazz(String studentId, String clazzCode) {
+    }
+
+    @Override
+    public Page<Student> readAllByClazz(String clazzCode, Map<String, String> queryParams, Pageable pageable) {
+        return null;
     }
 }

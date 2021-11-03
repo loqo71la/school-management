@@ -2,8 +2,10 @@ package com.tx.schoolmanagement.module.common.service;
 
 import com.tx.schoolmanagement.module.common.exception.ItemNotFoundException;
 import com.tx.schoolmanagement.module.common.exception.UnauthorizedException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
@@ -46,17 +48,13 @@ public abstract class VolatileService<K, T extends Model<K>> implements CrudServ
     }
 
     @Override
-    public List<T> readAll() {
-        return readAll(Collections.emptyMap());
-    }
-
-    @Override
-    public List<T> readAll(Map<String, String> queryParams) {
-        return volatileData.values()
-                .stream()
-                .sorted()
-                .filter(buildFilter(queryParams))
-                .collect(Collectors.toList());
+    public Page<T> readAll(Map<String, String> queryParams, Pageable pageable) {
+        List<T> itemList = volatileData.values()
+            .stream()
+            .sorted()
+            .filter(buildFilter(queryParams))
+            .collect(Collectors.toList());
+        return new PageImpl<>(itemList);
     }
 
     @Override
