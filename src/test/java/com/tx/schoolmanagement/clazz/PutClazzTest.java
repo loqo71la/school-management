@@ -1,6 +1,6 @@
 package com.tx.schoolmanagement.clazz;
 
-import com.tx.schoolmanagement.module.clazz.service.Clazz;
+import com.tx.schoolmanagement.module.clazz.repository.Clazz;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

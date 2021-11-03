@@ -2,7 +2,12 @@ package com.tx.schoolmanagement.module.common.controller;
 
 import com.tx.schoolmanagement.module.common.constant.ControllerConstants;
 import com.tx.schoolmanagement.module.common.exception.BadRequestException;
+import com.tx.schoolmanagement.module.common.mapper.Mapper;
 import com.tx.schoolmanagement.module.common.service.CrudService;
+import com.tx.schoolmanagement.module.common.utils.RequestUtil;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -33,23 +38,30 @@ public abstract class RestApiController<K, T, U> {
     protected CrudService<K, U> modelService;
 
     /**
+     * Store the mapper instance.
+     */
+    protected Mapper<T, U> mapper;
+
+    /**
      * HTTP GetAll method.
      *
      * @param queryParams Request query param
      * @return a list of dto.
      */
     @GetMapping
-    public ResponseEntity<List<T>> getAll(@RequestParam Map<String, String> queryParams) {
-        Set<String> fields = queryParams.keySet();
-        if (!hasValidFields(fields)) {
-            throw new BadRequestException(buildErrorMessage(fields));
-        }
-
-        List<T> dtoList = modelService.readAll(queryParams)
-                .stream()
-                .map(this::toDto)
-                .collect(Collectors.toList());
-        return ResponseEntity.ok(dtoList);
+    public ResponseEntity<ResultPage<T>> getAll(@RequestParam(defaultValue = "0") int page,
+                                                @RequestParam(defaultValue = "15") int size,
+                                                @RequestParam Map<String, String> queryParams) {
+        RequestUtil.validateFields(queryParams, mapper.getDtoFields());
+        Page<U> modelPage = modelService.readAll(queryParams, PageRequest.of(page, size));
+        return ResponseEntity.ok(new ResultPage<>(
+            (int) modelPage.getTotalElements(),
+            modelPage.getTotalPages(),
+            modelPage.getNumber(),
+            modelPage.stream()
+                .map(mapper::toDto)
+                .collect(Collectors.toList())
+        ));
     }
 
     /**
@@ -60,7 +72,7 @@ public abstract class RestApiController<K, T, U> {
      */
     @GetMapping("/{id}")
     public ResponseEntity<T> getById(@PathVariable K id) {
-        T dto = toDto(modelService.read(id));
+        T dto = mapper.toDto(modelService.read(id));
         return ResponseEntity.ok(dto);
     }
 
@@ -72,9 +84,9 @@ public abstract class RestApiController<K, T, U> {
      */
     @PostMapping
     public ResponseEntity<ResultInfo> post(@RequestBody T dto) {
-        modelService.create(toModel(dto));
+        modelService.create(mapper.toModel(dto));
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(buildResultInfo());
+            .body(buildResultInfo());
     }
 
     /**
@@ -86,7 +98,7 @@ public abstract class RestApiController<K, T, U> {
      */
     @PutMapping("/{id}")
     public ResponseEntity<ResultInfo> put(@PathVariable K id, @RequestBody T dto) {
-        modelService.update(id, toModel(dto));
+        modelService.update(id, mapper.toModel(dto));
         return ResponseEntity.ok(buildResultInfo());
     }
 
@@ -100,50 +112,6 @@ public abstract class RestApiController<K, T, U> {
     public ResponseEntity<ResultInfo> delete(@PathVariable K id) {
         modelService.delete(id);
         return ResponseEntity.ok(buildResultInfo());
-    }
-
-    /**
-     * Returns the list of dto fields.
-     *
-     * @return the list of fields.
-     */
-    protected abstract List<String> getDtoFields();
-
-    /**
-     * Converts model to dto.
-     *
-     * @param model to be converted.
-     * @return a dto.
-     */
-    protected abstract T toDto(U model);
-
-    /**
-     * Converts dto to model.
-     *
-     * @param dto to be converted.
-     * @return a model.
-     */
-    protected abstract U toModel(T dto);
-
-    /**
-     * Verifies if the selected fields are valid.
-     *
-     * @param fields to be validated.
-     * @return true if are valid, otherwise false.
-     */
-    private boolean hasValidFields(Set<String> fields) {
-        return getDtoFields().containsAll(fields);
-    }
-
-    /**
-     * Builds the error message for invalid fields.
-     *
-     * @param fields to be validated.
-     * @return the error message.
-     */
-    private String buildErrorMessage(Set<String> fields) {
-        getDtoFields().forEach(fields::remove);
-        return String.format(ControllerConstants.INVALID_FILTER_ERROR, fields);
     }
 
     /**

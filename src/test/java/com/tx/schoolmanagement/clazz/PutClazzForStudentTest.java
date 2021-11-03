@@ -1,8 +1,7 @@
 package com.tx.schoolmanagement.clazz;
 
-import com.tx.schoolmanagement.module.clazz.service.Clazz;
-import com.tx.schoolmanagement.module.student.service.Student;
-import org.junit.jupiter.api.AfterEach;
+import com.tx.schoolmanagement.module.clazz.repository.Clazz;
+import com.tx.schoolmanagement.module.student.repository.Student;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -49,15 +48,15 @@ public class PutClazzForStudentTest {
         studentId = 32;
     }
 
-    @AfterEach
-    public void tearDown() {
-        volatileClazzes.get(clazzCode)
-                .getStudentIdList()
-                .remove(studentId);
-        volatileStudents.get(studentId)
-                .getClazzCodeList()
-                .remove(clazzCode);
-    }
+//    @AfterEach
+//    public void tearDown() {
+//        volatileClazzes.get(clazzCode)
+//                .getStudentIdList()
+//                .remove(studentId);
+//        volatileStudents.get(studentId)
+//                .getClazzCodeList()
+//                .remove(clazzCode);
+//    }
 
     @Test
     public void PutClazzForStudentEndpoint_WithoutPayload_ReturnsSuccess() throws Exception {

@@ -1,6 +1,6 @@
 package com.tx.schoolmanagement.student;
 
-import com.tx.schoolmanagement.module.student.service.Student;
+import com.tx.schoolmanagement.module.student.repository.Student;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

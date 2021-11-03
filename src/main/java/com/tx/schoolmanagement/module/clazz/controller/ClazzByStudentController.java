@@ -1,27 +1,26 @@
 package com.tx.schoolmanagement.module.clazz.controller;
 
-import com.tx.schoolmanagement.module.clazz.service.Clazz;
-import com.tx.schoolmanagement.module.clazz.service.ClazzVolatileService;
+import com.tx.schoolmanagement.module.clazz.mapper.ClazzMapper;
+import com.tx.schoolmanagement.module.clazz.repository.Clazz;
+import com.tx.schoolmanagement.module.clazz.service.ClazzService;
 import com.tx.schoolmanagement.module.common.constant.ControllerConstants;
-import com.tx.schoolmanagement.module.common.constant.DtoFieldConstants;
 import com.tx.schoolmanagement.module.common.controller.ResultInfo;
+import com.tx.schoolmanagement.module.common.controller.ResultPage;
 import com.tx.schoolmanagement.module.common.controller.ResultStatus;
-import com.tx.schoolmanagement.module.common.exception.BadRequestException;
-import com.tx.schoolmanagement.module.student.service.Student;
-import com.tx.schoolmanagement.module.student.service.StudentVolatileService;
+import com.tx.schoolmanagement.module.common.utils.RequestUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Arrays;
-import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -32,16 +31,16 @@ import java.util.stream.Collectors;
 public class ClazzByStudentController {
 
     /**
-     * Stores the student volatile service.
+     * Stores the clazz service.
      */
     @Autowired
-    private StudentVolatileService studentService;
+    private ClazzService clazzService;
 
     /**
-     * Stores the clazz volatile service.
+     * Stores the clazz mapper.
      */
     @Autowired
-    private ClazzVolatileService clazzService;
+    private ClazzMapper clazzMapper;
 
     /**
      * HTTP GetAll method.
@@ -51,64 +50,47 @@ public class ClazzByStudentController {
      * @return a list of studentDto.
      */
     @GetMapping
-    public ResponseEntity<List<ClazzDto>> getAll(@PathVariable Integer studentId, @RequestParam Map<String, String> queryParams) {
-        Set<String> fieldList = queryParams.keySet();
-        List<String> dtoFieldList = getDtoFields();
-        if (!dtoFieldList.containsAll(fieldList)) {
-            dtoFieldList.forEach(fieldList::remove);
-            String errorMessage = String.format(ControllerConstants.INVALID_FILTER_ERROR, fieldList.toString());
-            throw new BadRequestException(errorMessage);
-        }
-
-        Student student = studentService.read(studentId);
-        List<ClazzDto> clazzDtoList = student.getClazzCodeList()
-            .stream()
-            .map(clazzService::read)
-            .filter(clazz -> queryParams.isEmpty() ? Boolean.TRUE : clazzService.match(clazz, queryParams))
-            .map(this::toDto)
-            .collect(Collectors.toList());
-        return ResponseEntity.ok(clazzDtoList);
+    public ResponseEntity<ResultPage<ClazzDto>> getAll(@PathVariable String studentId,
+                                                       @RequestParam(defaultValue = "0") int page,
+                                                       @RequestParam(defaultValue = "15") int size,
+                                                       @RequestParam Map<String, String> queryParams) {
+        RequestUtil.validateFields(queryParams, clazzMapper.getDtoFields());
+        Page<Clazz> modelPage = clazzService.readAllByStudent(studentId, queryParams, PageRequest.of(page, size));
+        return ResponseEntity.ok(new ResultPage<>(
+            (int) modelPage.getTotalElements(),
+            modelPage.getTotalPages(),
+            modelPage.getNumber(),
+            modelPage.stream()
+                .map(clazzMapper::toDto)
+                .collect(Collectors.toList())
+        ));
     }
 
     /**
-     * HTTP Put method.
+     * HTTP Post method.
      *
-     * @param studentId id of selected studentDto.
+     * @param clazzCode code of selected clazz.
+     * @param studentId id of selected student.
      * @return the details of the processed request.
      */
-    @PutMapping("/{clazzCode}")
-    public ResponseEntity<ResultInfo> put(@PathVariable Integer studentId, @PathVariable String clazzCode) {
-        Student student = studentService.read(studentId);
-        Clazz clazz = clazzService.read(clazzCode);
-        student.addClazzCode(clazzCode);
-        clazz.addStudentId(studentId);
-
+    @PostMapping("/{clazzCode}")
+    public ResponseEntity<ResultInfo> post(@PathVariable String studentId, @PathVariable String clazzCode) {
+        clazzService.assignStudent(clazzCode, studentId);
         ResultInfo resultInfo = new ResultInfo(ResultStatus.SUCCESS);
         return ResponseEntity.ok(resultInfo);
     }
 
     /**
-     * Converts clazz to clazzDto.
+     * HTTP Delete method.
      *
-     * @param clazz to be converted.
-     * @return a clazzDto.
+     * @param clazzCode code of selected clazz.
+     * @param studentId id of selected student.
+     * @return the details of the processed request.
      */
-    private ClazzDto toDto(Clazz clazz) {
-        return new ClazzDto(
-            clazz.getId(),
-            clazz.getTitle(),
-            clazz.getDescription()
-        );
-    }
-
-    /**
-     * Returns the list of ClazzDto field names.
-     *
-     * @return the list of fields.
-     */
-    private List<String> getDtoFields() {
-        return Arrays.asList(DtoFieldConstants.CLAZZ_CODE,
-            DtoFieldConstants.CLAZZ_TITLE,
-            DtoFieldConstants.CLAZZ_DESCRIPTION);
+    @DeleteMapping("/{clazzCode}")
+    public ResponseEntity<ResultInfo> delete(@PathVariable String studentId, @PathVariable String clazzCode) {
+        clazzService.unassignStudent(clazzCode, studentId);
+        ResultInfo resultInfo = new ResultInfo(ResultStatus.SUCCESS);
+        return ResponseEntity.ok(resultInfo);
     }
 }
