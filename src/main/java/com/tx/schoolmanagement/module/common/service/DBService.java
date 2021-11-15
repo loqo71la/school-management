@@ -1,8 +1,11 @@
 package com.tx.schoolmanagement.module.common.service;
 
-import com.tx.schoolmanagement.module.common.exception.ItemNotFoundException;
-import com.tx.schoolmanagement.module.common.exception.UnauthorizedException;
-import org.springframework.data.repository.CrudRepository;
+import com.tx.schoolmanagement.module.common.exception.AlreadyExistException;
+import com.tx.schoolmanagement.module.common.exception.BadRequestException;
+import com.tx.schoolmanagement.module.common.exception.NotFoundException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.repository.PagingAndSortingRepository;
 
 import java.util.Date;
 import java.util.Optional;
@@ -10,19 +13,15 @@ import java.util.Optional;
 public abstract class DBService<K, T extends Model<K>> implements CrudService<K, T> {
 
     /**
-     * Stores the error message for unauthorized.
+     * Reads all models with specific filter.
+     *
+     * @param pageable request pagination fields.
+     * @return the list of models.
      */
-    protected String alreadyExistErrorMessage;
-
-    /**
-     * Stores the error message for not found.
-     */
-    protected String notFoundErrorMessage;
-
-    /**
-     * Stores the volatile data in the system.
-     */
-    protected CrudRepository<T, K> modelRepository;
+    @Override
+    public Page<T> readAll(Pageable pageable) {
+        return getModelRepository().findAll(pageable);
+    }
 
     /**
      * Creates a new model.
@@ -33,30 +32,35 @@ public abstract class DBService<K, T extends Model<K>> implements CrudService<K,
     public void create(T model) {
         Optional<T> current = readById(model.getId());
         if (current.isPresent()) {
-            throw new UnauthorizedException(alreadyExistErrorMessage);
+            throw new AlreadyExistException(getModelName(), String.valueOf(model.getId()));
         }
         model.setCreatedDate(new Date());
-        modelRepository.save(model);
+        getModelRepository().save(model);
     }
 
+    /**
+     * Reads a single model for specific id.
+     *
+     * @param id model id.
+     * @return the model.
+     */
     @Override
     public T read(K id) {
         Optional<T> model = readById(id);
         if (model.isEmpty()) {
-            throw new ItemNotFoundException(notFoundErrorMessage);
+            throw new NotFoundException(getModelName(), String.valueOf(id));
         }
         return model.get();
     }
 
-    @Override
-    public void delete(K id) {
-        modelRepository.deleteById(id);
-    }
-
     protected Optional<T> readById(K id) {
         if (id == null || id.toString().isEmpty()) {
-            throw new ItemNotFoundException(notFoundErrorMessage);
+            throw new BadRequestException();
         }
-        return modelRepository.findById(id);
+        return getModelRepository().findById(id);
     }
+
+    protected abstract PagingAndSortingRepository<T, K> getModelRepository();
+
+    protected abstract String getModelName();
 }

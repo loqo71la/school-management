@@ -1,28 +1,27 @@
 package com.tx.schoolmanagement.student;
 
 import com.tx.schoolmanagement.module.student.repository.Student;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
+import com.tx.schoolmanagement.module.student.repository.StudentRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.SpyBean;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultActions;
 
-import java.util.Map;
+import java.util.Optional;
 
+import static com.tx.schoolmanagement.TestUtil.buildStudent;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -32,66 +31,51 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 public class PutStudentTest {
 
-    @SpyBean
-    private Map<Integer, Student> volatileStudents;
+    @MockBean
+    private StudentRepository studentRepository;
 
     @Autowired
     private MockMvc mockMvc;
 
-    private Integer studentId;
-
-    @BeforeEach
-    public void setup() {
-        studentId = 5;
-    }
-
-    @AfterEach
-    public void tearDown() {
-        volatileStudents.get(studentId)
-                .setName("Jane");
-        volatileStudents.get(studentId)
-                .setLastname("Graham");
-    }
-
     @Test
-    public void PutStudentEndpoint_WithoutIdInThePayload_ReturnsSuccess() throws Exception {
-        assertTrue(volatileStudents.containsKey(studentId));
-        mockMvc.perform(put(String.format("/api/students/%d", studentId))
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"firstName\": \"Jane\", \"lastName\": \"Bam\"}"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.*", hasSize(1)))
-                .andExpect(jsonPath("$.status", is("success")));
+    public void PutStudentEndpoint_WithValidPayload_ReturnsSuccess() throws Exception {
+        // Arrange
+        when(studentRepository.findById("00001"))
+            .thenReturn(Optional.of(buildStudent("00001", "Jose", "Perez")));
 
-        verify(volatileStudents).put(eq(studentId), any(Student.class));
-    }
+        // Act
+        ResultActions result = mockMvc.perform(put("/api/students/00001")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content("{\"firstName\": \"Jose\", \"lastName\": \"Perez\"}"));
 
-    @Test
-    public void PutStudentEndpoint_WithIdInThePayload_ReturnsSuccessWithoutModifyTheId() throws Exception {
-        assertTrue(volatileStudents.containsKey(studentId));
-        mockMvc.perform(put(String.format("/api/students/%d", studentId))
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(String.format("{\"studentId\": %d, \"firstName\": \"Jane\", \"lastName\": \"Bam\"}", studentId)))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.*", hasSize(1)))
-                .andExpect(jsonPath("$.status", is("success")));
+        // Assert
+        result.andExpect(status().isOk())
+            .andExpect(jsonPath("$.*", hasSize(2)))
+            .andExpect(jsonPath("$.status", is("success")))
+            .andExpect(jsonPath("$.message", is("Student with ID [00001] was successfully updated.")));
 
-        verify(volatileStudents).put(eq(studentId), any(Student.class));
+        verify(studentRepository).findById("00001");
+        verify(studentRepository).save(any(Student.class));
     }
 
     @Test
     public void PutStudentEndpoint_WithInvalidId_ReturnsNotFoundError() throws Exception {
-        int studentId = 8;
-        assertFalse(volatileStudents.containsKey(studentId));
+        // Arrange
+        when(studentRepository.findById("00001"))
+            .thenReturn(Optional.empty());
 
-        mockMvc.perform(put(String.format("/api/students/%d", studentId))
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"name\": \"Pam\", \"lastName\": \"Bam\"}"))
-                .andExpect(status().isNotFound())
-                .andExpect(jsonPath("$.*", hasSize(2)))
-                .andExpect(jsonPath("$.status", is("error")))
-                .andExpect(jsonPath("$.message", is("Student not found")));
+        // Act
+        ResultActions result = mockMvc.perform(put("/api/students/00001")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content("{\"firstName\": \"Jose\", \"lastName\": \"Perez\"}"));
 
-        verify(volatileStudents, never()).put(eq(studentId), any(Student.class));
+        // Assert
+        result.andExpect(status().isNotFound())
+            .andExpect(jsonPath("$.*", hasSize(2)))
+            .andExpect(jsonPath("$.status", is("error")))
+            .andExpect(jsonPath("$.message", is("Student with ID [00001] was not found.")));
+
+        verify(studentRepository).findById("00001");
+        verify(studentRepository, never()).save(any(Student.class));
     }
 }

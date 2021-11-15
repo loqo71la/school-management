@@ -1,23 +1,23 @@
 package com.tx.schoolmanagement.student;
 
-import com.tx.schoolmanagement.module.student.repository.Student;
+import com.tx.schoolmanagement.module.student.repository.StudentRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.SpyBean;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultActions;
 
-import java.util.Map;
+import java.util.Optional;
 
+import static com.tx.schoolmanagement.TestUtil.buildStudent;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -27,38 +27,45 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 public class GetByIdStudentTest {
 
-    @SpyBean
-    private Map<Integer, Student> volatileStudents;
+    @MockBean
+    private StudentRepository studentRepository;
 
     @Autowired
     private MockMvc mockMvc;
 
     @Test
     public void GetStudentByIdEndpoint_WithValidStudentId_ReturnsTheStudent() throws Exception {
-        Integer studentId = 45;
-        assertTrue(volatileStudents.containsKey(studentId));
+        // Arrange
+        when(studentRepository.findById("00001"))
+            .thenReturn(Optional.of(buildStudent("00001", "Jose", "Perez")));
 
-        mockMvc.perform(get(String.format("/api/students/%d", studentId)))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.*", hasSize(3)))
-                .andExpect(jsonPath("$.studentId", is(studentId)))
-                .andExpect(jsonPath("$.firstName", is("John")))
-                .andExpect(jsonPath("$.lastName", is("Wilson")));
+        // Act
+        ResultActions result = mockMvc.perform(get("/api/students/00001"));
 
-        verify(volatileStudents).get(studentId);
+        // Assert
+        result.andExpect(status().isOk())
+            .andExpect(jsonPath("$.idNo", is("00001")))
+            .andExpect(jsonPath("$.firstName", is("Jose")))
+            .andExpect(jsonPath("$.lastName", is("Perez")));
+
+        verify(studentRepository).findById("00001");
     }
 
     @Test
     public void GetStudentByIdEndpoint_WithInvalidStudentId_ReturnsNotFoundError() throws Exception {
-        Integer invalidStudentId = 8;
-        assertFalse(volatileStudents.containsKey(invalidStudentId));
+        // Arrange
+        when(studentRepository.findById("00001"))
+            .thenReturn(Optional.empty());
 
-        mockMvc.perform(get(String.format("/api/students/%d", invalidStudentId)))
-                .andExpect(status().isNotFound())
-                .andExpect(jsonPath("$.*", hasSize(2)))
-                .andExpect(jsonPath("$.status", is("error")))
-                .andExpect(jsonPath("$.message", is("Student not found")));
+        // Act
+        ResultActions result = mockMvc.perform(get("/api/students/00001"));
 
-        verify(volatileStudents, never()).get(invalidStudentId);
+        // Assert
+        result.andExpect(status().isNotFound())
+            .andExpect(jsonPath("$.*", hasSize(2)))
+            .andExpect(jsonPath("$.status", is("error")))
+            .andExpect(jsonPath("$.message", is("Student with ID [00001] was not found.")));
+
+        verify(studentRepository).findById("00001");
     }
 }

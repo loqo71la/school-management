@@ -1,6 +1,6 @@
 package com.tx.schoolmanagement.module.student.controller;
 
-import com.tx.schoolmanagement.module.common.constant.ControllerConstants;
+import com.tx.schoolmanagement.module.common.constant.RouteConstants;
 import com.tx.schoolmanagement.module.common.controller.RestApiController;
 import com.tx.schoolmanagement.module.student.mapper.StudentMapper;
 import com.tx.schoolmanagement.module.student.repository.Student;
@@ -9,11 +9,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import static com.tx.schoolmanagement.module.common.constant.DtoConstants.STUDENT_MODEL;
+
 /**
  * Manages HTTP request for students.
  */
 @RestController
-@RequestMapping(ControllerConstants.STUDENT_URL)
+@RequestMapping(RouteConstants.STUDENT_URL)
 public class StudentController extends RestApiController<String, StudentDto, Student> {
 
     /**
@@ -34,5 +36,10 @@ public class StudentController extends RestApiController<String, StudentDto, Stu
     @Autowired
     public void setMapper(StudentMapper studentMapper) {
         super.mapper = studentMapper;
+    }
+
+    @Override
+    protected String getModelName() {
+        return STUDENT_MODEL;
     }
 }

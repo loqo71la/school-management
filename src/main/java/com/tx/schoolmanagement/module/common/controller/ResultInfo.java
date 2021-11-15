@@ -11,8 +11,4 @@ public record ResultInfo(
     @JsonProperty("message")
     @JsonInclude(JsonInclude.Include.NON_NULL)
     String message
-) {
-    public ResultInfo(ResultStatus status) {
-        this(status, null);
-    }
-}
+) { }

@@ -5,11 +5,13 @@ import com.tx.schoolmanagement.module.common.service.CrudService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
-import java.util.Map;
+import java.util.List;
 
 public interface ClazzService extends CrudService<String, Clazz> {
 
-    Page<Clazz> readAllByStudent(String studentId, Map<String, String> queryParams, Pageable pageable);
+    List<Clazz> readAllByStudent(String studentId);
+
+    Page<Clazz> readPageByStudent(String studentId, Pageable pageable);
 
     void assignStudent(String clazzCode, String studentId);
 

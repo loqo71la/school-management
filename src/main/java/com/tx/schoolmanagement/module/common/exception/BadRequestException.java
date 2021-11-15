@@ -1,5 +1,7 @@
 package com.tx.schoolmanagement.module.common.exception;
 
+import static com.tx.schoolmanagement.module.common.constant.ResponseConstants.BAD_REQUEST;
+
 /**
  * Exception to describe a malformed request.
  */
@@ -7,20 +9,8 @@ public class BadRequestException extends RuntimeException {
 
     /**
      * Creates a new instance of BadRequestException.
-     *
-     * @param message Exception message.
      */
-    public BadRequestException(String message) {
-        super(message);
-    }
-
-    /**
-     * Creates a new instance of BadRequestException.
-     *
-     * @param message Exception message.
-     * @param cause   Throwable cause
-     */
-    public BadRequestException(String message, Throwable cause) {
-        super(message, cause);
+    public BadRequestException() {
+        super(BAD_REQUEST);
     }
 }

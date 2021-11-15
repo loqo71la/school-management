@@ -2,8 +2,9 @@ package com.tx.schoolmanagement.exceptionhandler;
 
 import com.tx.schoolmanagement.module.common.controller.ResultInfo;
 import com.tx.schoolmanagement.module.common.controller.ResultStatus;
+import com.tx.schoolmanagement.module.common.exception.AlreadyExistException;
 import com.tx.schoolmanagement.module.common.exception.BadRequestException;
-import com.tx.schoolmanagement.module.common.exception.ItemNotFoundException;
+import com.tx.schoolmanagement.module.common.exception.NotFoundException;
 import com.tx.schoolmanagement.module.common.exception.UnauthorizedException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -34,8 +35,8 @@ public class InvalidDataExceptionHandler {
      * @param ex item not found instance.
      * @return ResponseEntity with custom exception.
      */
-    @ExceptionHandler(ItemNotFoundException.class)
-    public ResponseEntity<ResultInfo> handleItemNotFoundException(ItemNotFoundException ex) {
+    @ExceptionHandler(NotFoundException.class)
+    public ResponseEntity<ResultInfo> handleItemNotFoundException(NotFoundException ex) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
             .body(buildResultInfo(ex.getMessage()));
     }
@@ -49,6 +50,18 @@ public class InvalidDataExceptionHandler {
     @ExceptionHandler(UnauthorizedException.class)
     public ResponseEntity<ResultInfo> handleUnauthorizedException(UnauthorizedException ex) {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+            .body(buildResultInfo(ex.getMessage()));
+    }
+
+    /**
+     * Handler for already exist exception.
+     *
+     * @param ex already exist instance.
+     * @return ResponseEntity with custom exception.
+     */
+    @ExceptionHandler(AlreadyExistException.class)
+    public ResponseEntity<ResultInfo> handleAlreadyExistException(AlreadyExistException ex) {
+        return ResponseEntity.status(HttpStatus.CONFLICT)
             .body(buildResultInfo(ex.getMessage()));
     }
 

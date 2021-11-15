@@ -1,16 +1,19 @@
 package com.tx.schoolmanagement.module.common.exception;
 
+import static com.tx.schoolmanagement.module.common.constant.ResponseConstants.ALREADY_EXIST;
+
 /**
- * Exception to describe when a operation is unauthorized.
+ * Exception to describe when an operation is unauthorized.
  */
-public class AlreadyExistException  extends Exception{
+public class AlreadyExistException extends RuntimeException {
 
     /**
-     * Creates a new instance of UnauthorizedException.
+     * Creates a new instance of AlreadyExistException.
      *
-     * @param message Exception message.
+     * @param model model name.
+     * @param id    model id.
      */
-    public AlreadyExistException(String message) {
-        super(message);
+    public AlreadyExistException(String model, String id) {
+        super(String.format(ALREADY_EXIST, model, id));
     }
 }

@@ -1,30 +1,30 @@
 package com.tx.schoolmanagement.module.student.controller;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.tx.schoolmanagement.module.common.constant.DtoFieldConstants;
+import com.tx.schoolmanagement.module.common.constant.DtoConstants;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.util.Date;
 
 public record StudentDto(
 
-    @JsonProperty(DtoFieldConstants.STUDENT_ID)
+    @JsonProperty(DtoConstants.STUDENT_ID)
     String id,
 
-    @JsonProperty(DtoFieldConstants.STUDENT_NAME)
+    @JsonProperty(DtoConstants.STUDENT_NAME)
     String name,
 
-    @JsonProperty(DtoFieldConstants.STUDENT_LAST_NAME)
+    @JsonProperty(DtoConstants.STUDENT_LAST_NAME)
     String lastname,
 
-    @JsonProperty(DtoFieldConstants.CREATED_DATE)
+    @JsonProperty(DtoConstants.CREATED_DATE)
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
     Date createdDate,
 
-    @JsonProperty(DtoFieldConstants.MODIFIED_DATE)
+    @JsonProperty(DtoConstants.MODIFIED_DATE)
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
     Date modifiedDate,
 
-    @JsonProperty(DtoFieldConstants.STUDENT_GENDER)
+    @JsonProperty(DtoConstants.STUDENT_GENDER)
     boolean gender
 ) { }

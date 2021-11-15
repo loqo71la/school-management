@@ -3,7 +3,13 @@ package com.tx.schoolmanagement.module.common.constant;
 /**
  * Constants for end-point
  */
-public final class ControllerConstants {
+public final class RouteConstants {
+
+    /**
+     * Default Constructor.
+     */
+    private RouteConstants() {
+    }
 
     /**
      * Students end-point.
@@ -24,9 +30,4 @@ public final class ControllerConstants {
      * Classes by student end-point.
      */
     public static final String CLAZZ_BY_STUDENT_URL = "/api/students/{studentId}/classes";
-
-    /**
-     * Stores the error message for invalid filters.
-     */
-    public static final String INVALID_FILTER_ERROR = "Invalid filters: %s";
 }
