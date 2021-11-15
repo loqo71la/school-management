@@ -1,4 +1,4 @@
-# Problem 1
+# School Management
 
 REST API for a system that assigns students to classes.
 
@@ -14,7 +14,7 @@ To run the API
 or
 ```
 ./gradlew clean build
-java -jar build/libs/problem1-0.0.1-SNAPSHOT.jar
+java -jar build/libs/school-management-0.0.1-SNAPSHOT.jar
 ```
 
 # REST API Structure
@@ -38,27 +38,6 @@ _Returns the list of all students_
     ..
     ..
 ]
-```
-
-### GET `/api/students?firstName=pam` status: `200 OK`
-_Returns the list of students with specific params_
-```
-[
-    {
-        "studentId": 27,
-        "firstName": "Pam",
-        "lastName": "Bam"        
-    }
-]
-```
-
-###GET `/api/students?age=14` status: `400 Bad Request`
-_Returns an error with invalid params_
-```
-{
-    "status": "error",
-    "message": "Invalid filters: [age]"
-}
 ```
 
 ### GET `/api/students/{id}` status: `200 OK`
@@ -141,27 +120,6 @@ _Returns the list of all classes_
     ..
     ..
 ]
-```
-
-### GET `/api/classes?title=usic` status: `200 OK`
-_Returns the list of classes with specific params_
-```
-[
-    {
-        "studentId": "3C-014",
-        "title": "Music",
-        "description": "Art of Listening"
-    }
-]
-```
-
-### GET `/api/classes?floor=47` status: `400 Bad Request`
-_Returns an error with invalid params_
-```
-{
-    "status": "error",
-    "message": "Invalid filters: [floor]"
-}
 ```
 
 ### GET `/api/classes/{code}` status: `200 OK`
@@ -256,27 +214,6 @@ _Returns an error when the class is not found_
 }
 ```
 
-### GET `/api/classes/{code}/students?lastName=collin` status: `200 OK`
-_Returns the list of students with specific params_
-```
-[
-    {
-        "studentId": 32,
-        "firstName": "Steve",
-        "lastName": "Collin"        
-    }
-]
-```
-
-### GET `/api/classes/{code}/students?floor=47` status: `400 Bad Request`
-_Returns an error with invalid params_
-```
-{
-    "status": "error",
-    "message": "Invalid filters: [floor]"
-}
-```
-
 ### PUT `/api/classes/{code}/students/{id}` status: `200 OK`
 _Returns the success info when the student was added to the class_
 ```
@@ -332,27 +269,6 @@ _Returns an error when the student is not found_
 {
     "status": "error",
     "message": "Student not found"
-}
-```
-
-### GET `/api/students/{id}/classes?lastName=collin` status: `200 OK`
-_Returns the list of classes with specific params_
-```
-[
-    {
-        "code": "1A-192",
-        "title": "Geology",
-        "description": "Sedimentary Petrology"        
-    }
-]
-```
-
-### GET `/api/students/{id}/classes?age=72` status: `400 Bad Request`
-_Returns an error with invalid params_
-```
-{
-    "status": "error",
-    "message": "Invalid filters: [age]"
 }
 ```
 

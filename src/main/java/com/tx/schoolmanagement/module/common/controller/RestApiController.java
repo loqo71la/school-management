@@ -1,13 +1,10 @@
 package com.tx.schoolmanagement.module.common.controller;
 
-import com.tx.schoolmanagement.module.common.constant.ControllerConstants;
-import com.tx.schoolmanagement.module.common.exception.BadRequestException;
 import com.tx.schoolmanagement.module.common.mapper.Mapper;
 import com.tx.schoolmanagement.module.common.service.CrudService;
-import com.tx.schoolmanagement.module.common.utils.RequestUtil;
+import com.tx.schoolmanagement.module.common.service.Model;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -18,10 +15,12 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 import java.util.stream.Collectors;
+
+import static com.tx.schoolmanagement.module.common.constant.ResponseConstants.CREATED;
+import static com.tx.schoolmanagement.module.common.constant.ResponseConstants.REMOVED;
+import static com.tx.schoolmanagement.module.common.constant.ResponseConstants.UPDATED;
+import static com.tx.schoolmanagement.module.common.controller.ResultStatus.SUCCESS;
 
 /**
  * Base controller to manage communication between http requests and services.
@@ -30,7 +29,7 @@ import java.util.stream.Collectors;
  * @param <T> model dto.
  * @param <U> model.
  */
-public abstract class RestApiController<K, T, U> {
+public abstract class RestApiController<K, T, U extends Model<K>> {
 
     /**
      * Stores the crud service instance.
@@ -45,15 +44,14 @@ public abstract class RestApiController<K, T, U> {
     /**
      * HTTP GetAll method.
      *
-     * @param queryParams Request query param
+     * @param page current page of the pagination.
+     * @param size total item per page.
      * @return a list of dto.
      */
     @GetMapping
     public ResponseEntity<ResultPage<T>> getAll(@RequestParam(defaultValue = "0") int page,
-                                                @RequestParam(defaultValue = "15") int size,
-                                                @RequestParam Map<String, String> queryParams) {
-        RequestUtil.validateFields(queryParams, mapper.getDtoFields());
-        Page<U> modelPage = modelService.readAll(queryParams, PageRequest.of(page, size));
+                                                @RequestParam(defaultValue = "15") int size) {
+        Page<U> modelPage = modelService.readAll(PageRequest.of(page, size));
         return ResponseEntity.ok(new ResultPage<>(
             (int) modelPage.getTotalElements(),
             modelPage.getTotalPages(),
@@ -84,9 +82,10 @@ public abstract class RestApiController<K, T, U> {
      */
     @PostMapping
     public ResponseEntity<ResultInfo> post(@RequestBody T dto) {
-        modelService.create(mapper.toModel(dto));
+        U model = mapper.toModel(dto);
+        modelService.create(model);
         return ResponseEntity.status(HttpStatus.CREATED)
-            .body(buildResultInfo());
+            .body(new ResultInfo(SUCCESS, String.format(CREATED, getModelName(), model.getId())));
     }
 
     /**
@@ -99,7 +98,7 @@ public abstract class RestApiController<K, T, U> {
     @PutMapping("/{id}")
     public ResponseEntity<ResultInfo> put(@PathVariable K id, @RequestBody T dto) {
         modelService.update(id, mapper.toModel(dto));
-        return ResponseEntity.ok(buildResultInfo());
+        return ResponseEntity.ok(new ResultInfo(SUCCESS, String.format(UPDATED, getModelName(), id)));
     }
 
     /**
@@ -111,15 +110,8 @@ public abstract class RestApiController<K, T, U> {
     @DeleteMapping("/{id}")
     public ResponseEntity<ResultInfo> delete(@PathVariable K id) {
         modelService.delete(id);
-        return ResponseEntity.ok(buildResultInfo());
+        return ResponseEntity.ok(new ResultInfo(SUCCESS, String.format(REMOVED, getModelName(), id)));
     }
 
-    /**
-     * Builds a success result info.
-     *
-     * @return the result info.
-     */
-    private ResultInfo buildResultInfo() {
-        return new ResultInfo(ResultStatus.SUCCESS);
-    }
+    protected abstract String getModelName();
 }

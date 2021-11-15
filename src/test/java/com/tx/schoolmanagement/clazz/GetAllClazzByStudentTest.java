@@ -1,26 +1,26 @@
 package com.tx.schoolmanagement.clazz;
 
-import com.tx.schoolmanagement.module.clazz.repository.Clazz;
-import com.tx.schoolmanagement.module.student.repository.Student;
+import com.tx.schoolmanagement.module.clazz.repository.ClazzRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.SpyBean;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultActions;
 
-import java.util.Map;
+import java.util.List;
 
+import static com.tx.schoolmanagement.TestUtil.buildClazz;
+import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -30,100 +30,116 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 public class GetAllClazzByStudentTest {
 
-    @SpyBean
-    private Map<String, Clazz> volatileClazzes;
-
-    @SpyBean
-    private Map<Integer, Student> volatileStudents;
+    @MockBean
+    private ClazzRepository clazzRepository;
 
     @Autowired
     private MockMvc mockMvc;
 
     @Test
-    public void GetAllClazzByStudentEndpoint_WithoutFilters_ReturnsTheClazzList() throws Exception {
-        int studentId = 45;
-        assertTrue(volatileStudents.containsKey(studentId));
+    public void GetAllClazzByStudentEndpoint_WithoutFilters_ReturnsTheClazzPage() throws Exception {
+        // Arrange
+        var pageable = PageRequest.of(0, 15);
+        var clazzList = List.of(
+            buildClazz("1A-192", "Geology", "Sedimentary Petrology"),
+            buildClazz("2B-032", "Engineering", "Principles of computational geo-location analysis"),
+            buildClazz("3C-014", "Music", "Art of Listening")
+        );
+        when(clazzRepository.findPageByStudent("00001", pageable))
+            .thenReturn(new PageImpl<>(clazzList, pageable, 3));
 
-        mockMvc.perform(get(String.format("/api/students/%d/classes", studentId)))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$", hasSize(3)))
-                .andExpect(jsonPath("$[0].code", is("1A-192")))
-                .andExpect(jsonPath("$[0].title", is("Geology")))
-                .andExpect(jsonPath("$[0].description", is("Sedimentary Petrology")))
-                .andExpect(jsonPath("$[1].code", is("2B-032")))
-                .andExpect(jsonPath("$[1].title", is("Engineering")))
-                .andExpect(jsonPath("$[1].description", is("Principles of computational geo-location analysis")))
-                .andExpect(jsonPath("$[2].code", is("3C-014")))
-                .andExpect(jsonPath("$[2].title", is("Music")))
-                .andExpect(jsonPath("$[2].description", is("Art of Listening")));
+        // Act
+        ResultActions result = mockMvc.perform(get("/api/students/00001/classes"));
 
-        // Includes the initial verification
-        verify(volatileStudents, times(2)).containsKey(studentId);
-        verify(volatileClazzes).containsKey("1A-192");
-        verify(volatileClazzes).containsKey("2B-032");
-        verify(volatileClazzes).containsKey("3C-014");
+        // Assert
+        result.andExpect(status().isOk())
+            .andExpect(jsonPath("$.*", hasSize(4)))
+            .andExpect(jsonPath("$.totalItem", is(3)))
+            .andExpect(jsonPath("$.totalPage", is(1)))
+            .andExpect(jsonPath("$.currentPage", is(0)))
+            .andExpect(jsonPath("$.items[0].code", is("1A-192")))
+            .andExpect(jsonPath("$.items[0].title", is("Geology")))
+            .andExpect(jsonPath("$.items[0].description", is("Sedimentary Petrology")))
+            .andExpect(jsonPath("$.items[1].code", is("2B-032")))
+            .andExpect(jsonPath("$.items[1].title", is("Engineering")))
+            .andExpect(jsonPath("$.items[1].description", is("Principles of computational geo-location analysis")))
+            .andExpect(jsonPath("$.items[2].code", is("3C-014")))
+            .andExpect(jsonPath("$.items[2].title", is("Music")))
+            .andExpect(jsonPath("$.items[2].description", is("Art of Listening")));
 
-        verify(volatileStudents).get(studentId);
-        verify(volatileClazzes).get("1A-192");
-        verify(volatileClazzes).get("2B-032");
-        verify(volatileClazzes).get("3C-014");
+        verify(clazzRepository).findPageByStudent("00001", pageable);
     }
 
     @Test
-    public void GetAllClazzByStudentEndpoint_WithInvalidStudent_ReturnsNotFoundError() throws Exception {
-        int studentId = 174;
-        assertFalse(volatileStudents.containsKey(studentId));
+    public void GetAllClazzByStudentEndpoint_WithInvalidStudent_ReturnsEmptyClazzPage() throws Exception {
+        // Arrange
+        var pageable = PageRequest.of(0, 15);
+        when(clazzRepository.findPageByStudent("00002", pageable))
+            .thenReturn(new PageImpl<>(List.of(), pageable, 0));
 
-        mockMvc.perform(get(String.format("/api/students/%d/classes", studentId)))
-                .andExpect(status().isNotFound())
-                .andExpect(jsonPath("$.*", hasSize(2)))
-                .andExpect(jsonPath("$.status", is("error")))
-                .andExpect(jsonPath("$.message", is("Student not found")));
+        // Act
+        ResultActions result = mockMvc.perform(get("/api/students/00002/classes"));
 
-        // Includes the initial verification
-        verify(volatileStudents, times(2)).containsKey(studentId);
-        verify(volatileStudents, never()).get(studentId);
-        verifyNoMoreInteractions(volatileClazzes);
+        // Assert
+        result.andExpect(status().isOk())
+            .andExpect(jsonPath("$.*", hasSize(4)))
+            .andExpect(jsonPath("$.totalItem", is(0)))
+            .andExpect(jsonPath("$.totalPage", is(0)))
+            .andExpect(jsonPath("$.currentPage", is(0)))
+            .andExpect(jsonPath("$.items", is(empty())));
+
+        verify(clazzRepository).findPageByStudent("00002", pageable);
     }
 
     @Test
-    public void GetAllClazzByStudentEndpoint_WithInvalidFilters_ReturnsBadRequestError() throws Exception {
-        int studentId = 45;
-        assertTrue(volatileStudents.containsKey(studentId));
+    public void GetAllClazzByStudentEndpoint_WithSizeFilters_ReturnsTheFirstClazzPage() throws Exception {
+        // Arrange
+        var pageable = PageRequest.of(0, 1);
+        var clazzList = List.of(
+            buildClazz("1A-192", "Geology", "Sedimentary Petrology")
+        );
+        when(clazzRepository.findPageByStudent("00001", pageable))
+            .thenReturn(new PageImpl<>(clazzList, pageable, 3));
 
-        mockMvc.perform(get(String.format("/api/students/%d/classes?title=music&owner=juan&male=true", studentId)))
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.*", hasSize(2)))
-                .andExpect(jsonPath("$.status", is("error")))
-                .andExpect(jsonPath("$.message", is("Invalid filters: [owner, male]")));
+        // Act
+        ResultActions result = mockMvc.perform(get("/api/students/00001/classes?size=1"));
 
-        // Includes the initial verification
-        verify(volatileStudents).containsKey(studentId);
-        verify(volatileStudents, never()).get(studentId);
-        verifyNoMoreInteractions(volatileClazzes);
+        // Assert
+        result.andExpect(status().isOk())
+            .andExpect(jsonPath("$.*", hasSize(4)))
+            .andExpect(jsonPath("$.totalItem", is(3)))
+            .andExpect(jsonPath("$.totalPage", is(3)))
+            .andExpect(jsonPath("$.currentPage", is(0)))
+            .andExpect(jsonPath("$.items[0].code", is("1A-192")))
+            .andExpect(jsonPath("$.items[0].title", is("Geology")))
+            .andExpect(jsonPath("$.items[0].description", is("Sedimentary Petrology")));
+
+        verify(clazzRepository).findPageByStudent("00001", pageable);
     }
 
     @Test
-    public void GetAllClazzByStudentEndpoint_WithValidFilters_ReturnsTheClazzList() throws Exception {
-        int studentId = 45;
-        assertTrue(volatileStudents.containsKey(studentId));
+    public void GetAllClazzByStudentEndpoint_WithPageFilters_ReturnsTheSpecificClazzPage() throws Exception {
+        // Arrange
+        var pageable = PageRequest.of(4, 2);
+        var clazzList = List.of(
+            buildClazz("1A-192", "Geology", "Sedimentary Petrology")
+        );
+        when(clazzRepository.findPageByStudent("00001", pageable))
+            .thenReturn(new PageImpl<>(clazzList, pageable, 9));
 
-        mockMvc.perform(get(String.format("/api/students/%d/classes?description=art", studentId)))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$", hasSize(1)))
-                .andExpect(jsonPath("$[0].code", is("3C-014")))
-                .andExpect(jsonPath("$[0].title", is("Music")))
-                .andExpect(jsonPath("$[0].description", is("Art of Listening")));
+        // Act
+        ResultActions result = mockMvc.perform(get("/api/students/00001/classes?size=2&page=4"));
 
-        // Include the initial verification
-        verify(volatileStudents, times(2)).containsKey(studentId);
-        verify(volatileClazzes).containsKey("1A-192");
-        verify(volatileClazzes).containsKey("2B-032");
-        verify(volatileClazzes).containsKey("3C-014");
+        // Assert
+        result.andExpect(status().isOk())
+            .andExpect(jsonPath("$.*", hasSize(4)))
+            .andExpect(jsonPath("$.totalItem", is(9)))
+            .andExpect(jsonPath("$.totalPage", is(5)))
+            .andExpect(jsonPath("$.currentPage", is(4)))
+            .andExpect(jsonPath("$.items[0].code", is("1A-192")))
+            .andExpect(jsonPath("$.items[0].title", is("Geology")))
+            .andExpect(jsonPath("$.items[0].description", is("Sedimentary Petrology")));
 
-        verify(volatileStudents).get(studentId);
-        verify(volatileClazzes).get("1A-192");
-        verify(volatileClazzes).get("2B-032");
-        verify(volatileClazzes).get("3C-014");
+        verify(clazzRepository).findPageByStudent("00001", pageable);
     }
 }

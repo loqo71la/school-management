@@ -1,15 +1,6 @@
 package com.tx.schoolmanagement.module.common.mapper;
 
-import java.util.List;
-
 public interface Mapper<T, U> {
-
-    /**
-     * Returns the list of dto fields.
-     *
-     * @return the list of fields.
-     */
-    List<String> getDtoFields();
 
     /**
      * Converts model to dto.

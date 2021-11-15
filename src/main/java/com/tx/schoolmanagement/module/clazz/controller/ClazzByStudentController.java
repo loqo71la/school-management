@@ -3,11 +3,10 @@ package com.tx.schoolmanagement.module.clazz.controller;
 import com.tx.schoolmanagement.module.clazz.mapper.ClazzMapper;
 import com.tx.schoolmanagement.module.clazz.repository.Clazz;
 import com.tx.schoolmanagement.module.clazz.service.ClazzService;
-import com.tx.schoolmanagement.module.common.constant.ControllerConstants;
+import com.tx.schoolmanagement.module.common.constant.RouteConstants;
 import com.tx.schoolmanagement.module.common.controller.ResultInfo;
 import com.tx.schoolmanagement.module.common.controller.ResultPage;
 import com.tx.schoolmanagement.module.common.controller.ResultStatus;
-import com.tx.schoolmanagement.module.common.utils.RequestUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -20,14 +19,18 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Map;
 import java.util.stream.Collectors;
 
+import static com.tx.schoolmanagement.module.common.constant.DtoConstants.CLAZZ_MODEL;
+import static com.tx.schoolmanagement.module.common.constant.DtoConstants.STUDENT_MODEL;
+import static com.tx.schoolmanagement.module.common.constant.ResponseConstants.ASSIGNED;
+import static com.tx.schoolmanagement.module.common.constant.ResponseConstants.UNASSIGNED;
+
 /**
- * Manages HTTP request for clazzes by student.
+ * Manages HTTP requests for clazzes by student.
  */
 @RestController
-@RequestMapping(ControllerConstants.CLAZZ_BY_STUDENT_URL)
+@RequestMapping(RouteConstants.CLAZZ_BY_STUDENT_URL)
 public class ClazzByStudentController {
 
     /**
@@ -45,17 +48,16 @@ public class ClazzByStudentController {
     /**
      * HTTP GetAll method.
      *
-     * @param studentId   id of selected student.
-     * @param queryParams Request query param.
+     * @param studentId id of selected student.
+     * @param page      current page of the pagination.
+     * @param size      total item per page.
      * @return a list of studentDto.
      */
     @GetMapping
     public ResponseEntity<ResultPage<ClazzDto>> getAll(@PathVariable String studentId,
                                                        @RequestParam(defaultValue = "0") int page,
-                                                       @RequestParam(defaultValue = "15") int size,
-                                                       @RequestParam Map<String, String> queryParams) {
-        RequestUtil.validateFields(queryParams, clazzMapper.getDtoFields());
-        Page<Clazz> modelPage = clazzService.readAllByStudent(studentId, queryParams, PageRequest.of(page, size));
+                                                       @RequestParam(defaultValue = "15") int size) {
+        Page<Clazz> modelPage = clazzService.readPageByStudent(studentId, PageRequest.of(page, size));
         return ResponseEntity.ok(new ResultPage<>(
             (int) modelPage.getTotalElements(),
             modelPage.getTotalPages(),
@@ -76,8 +78,10 @@ public class ClazzByStudentController {
     @PostMapping("/{clazzCode}")
     public ResponseEntity<ResultInfo> post(@PathVariable String studentId, @PathVariable String clazzCode) {
         clazzService.assignStudent(clazzCode, studentId);
-        ResultInfo resultInfo = new ResultInfo(ResultStatus.SUCCESS);
-        return ResponseEntity.ok(resultInfo);
+        return ResponseEntity.ok(new ResultInfo(
+            ResultStatus.SUCCESS,
+            String.format(ASSIGNED, CLAZZ_MODEL, clazzCode, STUDENT_MODEL, studentId)
+        ));
     }
 
     /**
@@ -90,7 +94,9 @@ public class ClazzByStudentController {
     @DeleteMapping("/{clazzCode}")
     public ResponseEntity<ResultInfo> delete(@PathVariable String studentId, @PathVariable String clazzCode) {
         clazzService.unassignStudent(clazzCode, studentId);
-        ResultInfo resultInfo = new ResultInfo(ResultStatus.SUCCESS);
-        return ResponseEntity.ok(resultInfo);
+        return ResponseEntity.ok(new ResultInfo(
+            ResultStatus.SUCCESS,
+            String.format(UNASSIGNED, CLAZZ_MODEL, clazzCode, STUDENT_MODEL, studentId)
+        ));
     }
 }

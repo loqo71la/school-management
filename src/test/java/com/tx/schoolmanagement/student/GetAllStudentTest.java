@@ -1,21 +1,25 @@
 package com.tx.schoolmanagement.student;
 
-import com.tx.schoolmanagement.module.student.repository.Student;
+import com.tx.schoolmanagement.module.student.repository.StudentRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.SpyBean;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultActions;
 
-import java.util.Map;
+import java.util.List;
 
+import static com.tx.schoolmanagement.TestUtil.buildStudent;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
-import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -25,56 +29,87 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 public class GetAllStudentTest {
 
-    @SpyBean
-    private Map<Integer, Student> volatileStudents;
+    @MockBean
+    private StudentRepository studentRepository;
 
     @Autowired
     private MockMvc mockMvc;
 
     @Test
-    public void GetAllStudentEndpoint_WithoutFilters_ReturnsTheStudentList() throws Exception {
-        mockMvc.perform(get("/api/students"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$", hasSize(5)))
-                .andExpect(jsonPath("$[0].studentId", is(5)))
-                .andExpect(jsonPath("$[0].firstName", is("Jane")))
-                .andExpect(jsonPath("$[0].lastName", is("Graham")))
-                .andExpect(jsonPath("$[1].studentId", is(13)))
-                .andExpect(jsonPath("$[1].firstName", is("Judith")))
-                .andExpect(jsonPath("$[1].lastName", is("Gray")))
-                .andExpect(jsonPath("$[2].studentId", is(27)))
-                .andExpect(jsonPath("$[2].firstName", is("Pam")))
-                .andExpect(jsonPath("$[2].lastName", is("Bam")))
-                .andExpect(jsonPath("$[3].studentId", is(32)))
-                .andExpect(jsonPath("$[3].firstName", is("Steve")))
-                .andExpect(jsonPath("$[3].lastName", is("Collin")))
-                .andExpect(jsonPath("$[4].studentId", is(45)))
-                .andExpect(jsonPath("$[4].firstName", is("John")))
-                .andExpect(jsonPath("$[4].lastName", is("Wilson")));
+    public void GetAllStudentEndpoint_WithoutFilters_ReturnsTheStudentPage() throws Exception {
+        // Arrange
+        var pageable = PageRequest.of(0, 15);
+        var clazzList = List.of(
+            buildStudent("00001", "Jose", "Perez"),
+            buildStudent("00002", "Maria", "Estrada")
+        );
+        when(studentRepository.findAll(pageable))
+            .thenReturn(new PageImpl<>(clazzList, pageable, 2));
 
-        verify(volatileStudents).values();
+        // Act
+        ResultActions result = mockMvc.perform(get("/api/students"));
+
+        // Assert
+        result.andExpect(status().isOk())
+            .andExpect(jsonPath("$.*", hasSize(4)))
+            .andExpect(jsonPath("$.totalItem", is(2)))
+            .andExpect(jsonPath("$.totalPage", is(1)))
+            .andExpect(jsonPath("$.currentPage", is(0)))
+            .andExpect(jsonPath("$.items[0].idNo", is("00001")))
+            .andExpect(jsonPath("$.items[0].firstName", is("Jose")))
+            .andExpect(jsonPath("$.items[0].lastName", is("Perez")))
+            .andExpect(jsonPath("$.items[1].idNo", is("00002")))
+            .andExpect(jsonPath("$.items[1].firstName", is("Maria")))
+            .andExpect(jsonPath("$.items[1].lastName", is("Estrada")));
+
+        verify(studentRepository).findAll(pageable);
     }
 
     @Test
-    public void GetAllStudentEndpoint_WithInvalidFilters_ReturnsBadRequestError() throws Exception {
-        mockMvc.perform(get("/api/students?firstName=john&age=12&class=math"))
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.*", hasSize(2)))
-                .andExpect(jsonPath("$.status", is("error")))
-                .andExpect(jsonPath("$.message", is("Invalid filters: [age, class]")));
+    public void GetAllStudentEndpoint_WithSizeFilters_ReturnsTheFirstStudentPage() throws Exception {
+        // Arrange
+        var pageable = PageRequest.of(0, 1);
+        var clazzList = List.of(buildStudent("00001", "Jose", "Perez"));
+        when(studentRepository.findAll(pageable))
+            .thenReturn(new PageImpl<>(clazzList, pageable, 3));
 
-        verify(volatileStudents, never()).values();
+        // Act
+        ResultActions result = mockMvc.perform(get("/api/students?size=1"));
+
+        // Assert
+        result.andExpect(status().isOk())
+            .andExpect(jsonPath("$.*", hasSize(4)))
+            .andExpect(jsonPath("$.totalItem", is(3)))
+            .andExpect(jsonPath("$.totalPage", is(3)))
+            .andExpect(jsonPath("$.currentPage", is(0)))
+            .andExpect(jsonPath("$.items[0].idNo", is("00001")))
+            .andExpect(jsonPath("$.items[0].firstName", is("Jose")))
+            .andExpect(jsonPath("$.items[0].lastName", is("Perez")));
+
+        verify(studentRepository).findAll(pageable);
     }
 
     @Test
-    public void GetAllStudentEndpoint_WithValidFilters_ReturnsTheStudentList() throws Exception {
-        mockMvc.perform(get("/api/students?firstName=pam"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$", hasSize(1)))
-                .andExpect(jsonPath("$[0].studentId", is(27)))
-                .andExpect(jsonPath("$[0].firstName", is("Pam")))
-                .andExpect(jsonPath("$[0].lastName", is("Bam")));
+    public void GetAllStudentEndpoint_WithPageFilters_ReturnsTheSpecificStudentPage() throws Exception {
+        // Arrange
+        var pageable = PageRequest.of(4, 2);
+        var clazzList = List.of(buildStudent("00001", "Jose", "Perez"));
+        when(studentRepository.findAll(pageable))
+            .thenReturn(new PageImpl<>(clazzList, pageable, 9));
 
-        verify(volatileStudents).values();
+        // Act
+        ResultActions result = mockMvc.perform(get("/api/students?size=2&page=4"));
+
+        // Assert
+        result.andExpect(status().isOk())
+            .andExpect(jsonPath("$.*", hasSize(4)))
+            .andExpect(jsonPath("$.totalItem", is(9)))
+            .andExpect(jsonPath("$.totalPage", is(5)))
+            .andExpect(jsonPath("$.currentPage", is(4)))
+            .andExpect(jsonPath("$.items[0].idNo", is("00001")))
+            .andExpect(jsonPath("$.items[0].firstName", is("Jose")))
+            .andExpect(jsonPath("$.items[0].lastName", is("Perez")));
+
+        verify(studentRepository).findAll(pageable);
     }
 }

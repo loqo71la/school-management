@@ -7,10 +7,12 @@ import com.tx.schoolmanagement.module.student.repository.StudentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
-import java.util.Map;
+
+import static com.tx.schoolmanagement.module.common.constant.DtoConstants.STUDENT_MODEL;
 
 @Service
 public class StudentDBService extends DBService<String, Student> implements StudentService {
@@ -19,39 +21,28 @@ public class StudentDBService extends DBService<String, Student> implements Stud
     private ClazzService clazzService;
 
     @Autowired
-    public void setModelRepository(StudentRepository studentRepository) {
-        super.modelRepository = studentRepository;
+    private StudentRepository studentRepository;
+
+    @Override
+    public Page<Student> readPageByClazz(String clazzCode, Pageable pageable) {
+        return studentRepository.findPageByClazz(clazzCode, pageable);
     }
 
     @Override
-    public Page<Student> readAll(Map<String, String> queryParams, Pageable pageable) {
-        String name = queryParams.get("name");
-        String lastname = queryParams.get("lastname");
-
-        StudentRepository studentRepository = getStudentRepository();
-        if (name != null && lastname != null) {
-            return studentRepository.findAllByNameAndLastname(name, lastname, pageable);
-        }
-        return lastname != null ?
-            studentRepository.findAllByLastname(lastname, pageable) :
-            name != null ?
-                studentRepository.findAllByName(name, pageable) :
-                studentRepository.findAll(pageable);
-    }
-
-    @Override
-    public Page<Student> readAllByClazz(String clazzCode, Map<String, String> queryParams, Pageable pageable) {
-        return getStudentRepository().findAllByClazz(clazzCode, pageable);
-    }
-
-    @Override
-    public void update(String id, Student newStudent) {
-        Student student = super.read(id);
-        student.setName(newStudent.getName());
+    public void update(String studentId, Student newStudent) {
+        Student student = super.read(studentId);
         student.setLastname(newStudent.getLastname());
         student.setGender(newStudent.getGender());
+        student.setName(newStudent.getName());
         student.setModifiedDate(new Date());
-        super.modelRepository.save(student);
+        studentRepository.save(student);
+    }
+
+    @Override
+    public void delete(String studentId) {
+        clazzService.readAllByStudent(studentId)
+            .forEach(clazz -> clazzService.unassignStudent(clazz.getId(), studentId));
+        studentRepository.deleteById(studentId);
     }
 
     @Override
@@ -64,7 +55,13 @@ public class StudentDBService extends DBService<String, Student> implements Stud
         clazzService.unassignStudent(clazzCode, studentId);
     }
 
-    private StudentRepository getStudentRepository() {
-        return (StudentRepository) super.modelRepository;
+    @Override
+    protected PagingAndSortingRepository<Student, String> getModelRepository() {
+        return studentRepository;
+    }
+
+    @Override
+    protected String getModelName() {
+        return STUDENT_MODEL;
     }
 }

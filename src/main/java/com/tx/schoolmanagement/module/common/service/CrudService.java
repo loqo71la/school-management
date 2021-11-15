@@ -3,9 +3,6 @@ package com.tx.schoolmanagement.module.common.service;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
-import java.util.List;
-import java.util.Map;
-
 /**
  * Defines the CRUD methods.
  *
@@ -24,11 +21,10 @@ public interface CrudService<K, T> {
     /**
      * Reads all models with specific filter.
      *
-     * @param queryParams request query param.
      * @param pageable request pagination fields.
      * @return the list of models.
      */
-    Page<T> readAll(Map<String, String> queryParams, Pageable pageable);
+    Page<T> readAll(Pageable pageable);
 
     /**
      * Reads a single model for specific id.

@@ -91,6 +91,10 @@ public class Student implements Model<String> {
         return clazzList;
     }
 
+    public void setClazzList(List<Clazz> clazzList) {
+        this.clazzList = clazzList;
+    }
+
     public void addClazz(Clazz clazz) {
         clazzList.add(clazz);
     }

@@ -98,6 +98,10 @@ public class Clazz implements Model<String> {
         return studentList;
     }
 
+    public void setStudentList(List<Student> studentList) {
+        this.studentList = studentList;
+    }
+
     public void addStudent(Student student) {
         studentList.add(student);
     }
