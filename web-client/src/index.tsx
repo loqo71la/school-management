@@ -15,10 +15,10 @@ ReactDOM.render(
       <Routes>
         <Route element={<App />}>
           <Route path="/" element={<Navigate replace to="/classes" />} />
-          <Route path="classes" element={<Clazzes />} />
-          <Route path="classes/:code" element={<Clazz />} />
-          <Route path="students" element={<Students />} />
-          <Route path="students/:noId" element={<Student />} />
+          <Route path="/classes" element={<Clazzes />} />
+          <Route path="/classes/:code" element={<Clazz />} />
+          <Route path="/students" element={<Students />} />
+          <Route path="/students/:noId" element={<Student />} />
         </Route>
       </Routes>
     </BrowserRouter>
