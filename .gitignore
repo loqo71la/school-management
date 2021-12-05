@@ -1,37 +1,24 @@
-HELP.md
-.gradle
-build/
-!gradle/wrapper/gradle-wrapper.jar
-!**/src/main/**/build/
-!**/src/test/**/build/
-
-### STS ###
-.apt_generated
-.classpath
-.factorypath
-.project
-.settings
-.springBeans
-.sts4-cache
-bin/
-!**/src/main/**/bin/
-!**/src/test/**/bin/
+rest-api/.gradle
+rest-api/build/
+!rest-api/gradle/wrapper/gradle-wrapper.jar
+!rest-api/**/src/main/**/build/
+!rest-api/**/src/test/**/build/
 
 ### IntelliJ IDEA ###
-.idea
-*.iws
-*.iml
-*.ipr
-out/
-!**/src/main/**/out/
-!**/src/test/**/out/
+rest-api/.idea
+rest-api/*.iws
+rest-api/*.iml
+rest-api/*.ipr
+rest-api/out/
+!rest-api/**/src/main/**/out/
+!rest-api/**/src/test/**/out/
 
 ### NetBeans ###
-/nbproject/private/
-/nbbuild/
-/dist/
-/nbdist/
-/.nb-gradle/
+rest-api/nbproject/private/
+rest-api/nbbuild/
+rest-api/dist/
+rest-api/nbdist/
+rest-api/.nb-gradle/
 
 ### VS Code ###
-.vscode/
+rest-api/.vscode/
