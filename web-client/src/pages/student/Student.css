@@ -1,0 +1,15 @@
+.studentForm section {
+    display: flex;
+    justify-content: flex-end;
+    padding: .75rem 0rem;
+}
+
+.gender {
+    display: flex;
+    justify-content: flex-start;
+    align-items: flex-start;
+}
+
+.gender label {
+    margin-left: 1rem;
+}

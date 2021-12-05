@@ -1,0 +1,5 @@
+.clazzForm section {
+    display: flex;
+    justify-content: flex-end;
+    padding: .75rem 0rem;
+}
