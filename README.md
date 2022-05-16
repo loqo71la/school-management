@@ -1,6 +1,6 @@
 # School Management
 
-Application to manage a system that assigns students to classes using SpringBoot core and ReactJs.
+Application to manage a system that assigns students to classes using SpringBoot and ReactJs.
 
 To run the set of tests
 ```
