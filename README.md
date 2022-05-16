@@ -1,6 +1,6 @@
 # School Management
 
-REST API for a system that assigns students to classes.
+Application to manage a system that assigns students to classes using SpringBoot core and ReactJs.
 
 To run the set of tests
 ```
