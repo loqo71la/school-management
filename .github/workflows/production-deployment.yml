@@ -31,6 +31,9 @@ jobs:
           echo REACT_APP_SM_API_URL="$SM_API_URL" >> .env.production
         shell: bash
 
+      - name: Build project
+        run: npm run build
+
       - name: Deploy to Firebase
         uses: FirebaseExtended/action-hosting-deploy@v0
         with:
