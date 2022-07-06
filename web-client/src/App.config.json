@@ -1,4 +1,0 @@
-{
-    "headers": { "Content-Type": "application/json" },
-    "baseUrl": "http://localhost:8080"
-}

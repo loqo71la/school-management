@@ -1,0 +1,40 @@
+name: Production Deployment
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  web-client-deploy:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./web-client
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Setup Node.js environment
+        uses: actions/setup-node@v3.3.0
+        with:
+          node-version: '16.x'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Generate .env file
+        env:
+          SM_API_URL: ${{ secrets.SM_API_URL }}
+        run: |
+          touch .env.production
+          echo REACT_APP_SM_API_URL="$SM_API_URL" >> .env.production
+        shell: bash
+
+      - name: Deploy to Firebase
+        uses: FirebaseExtended/action-hosting-deploy@v0
+        with:
+          repoToken: '${{ secrets.GITHUB_TOKEN }}'
+          firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_SCHOOL_MANAGEMENT_LOQO71LA }}'
+          channelId: live
+          projectId: school-management-loqo71la

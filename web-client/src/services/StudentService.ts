@@ -1,5 +1,6 @@
-import * as config from '../App.config.json';
 import { IStudent } from '../shared/models/IStudent';
+
+const headers = { "Content-Type": "application/json" };
 
 export function getStudents() {
   return doRequest({ method: 'GET' });
@@ -10,11 +11,11 @@ export function getStudent(idNo: string) {
 }
 
 export function addStudent(student: IStudent) {
-  return doRequest({ method: 'POST', body: JSON.stringify(student), headers: config.headers })
+  return doRequest({ method: 'POST', body: JSON.stringify(student), headers })
 }
 
 export function updateStudent(idNo: string, student: IStudent) {
-  return doRequest({ method: 'PUT', body: JSON.stringify(student), headers: config.headers }, `/${idNo}`);
+  return doRequest({ method: 'PUT', body: JSON.stringify(student), headers }, `/${idNo}`);
 }
 
 export function deleteStudent(idNo: string) {
@@ -22,7 +23,7 @@ export function deleteStudent(idNo: string) {
 }
 
 function doRequest(init: RequestInit, path: string = '') {
-  return fetch(`${config.baseUrl}/api/students${path}`, init)
+  return fetch(`${process.env.REACT_APP_SM_API_URL}/api/students${path}`, init)
     .then(response => {
       const data = response.json();
       return response.ok ? data : data.then(error => Promise.reject(error));

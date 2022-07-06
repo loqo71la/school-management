@@ -1,5 +1,6 @@
 import { IClazz } from "../shared/models/IClazz";
-import * as config from '../App.config.json';
+
+const headers = { "Content-Type": "application/json" }
 
 export function getClazzes() {
   return doRequest({ method: 'GET' });
@@ -10,11 +11,11 @@ export function getClazz(code: string) {
 }
 
 export function addClazz(clazz: IClazz) {
-  return doRequest({ method: 'POST', body: JSON.stringify(clazz), headers: config.headers })
+  return doRequest({ method: 'POST', body: JSON.stringify(clazz), headers })
 }
 
 export function updateClazz(code: string, clazz: IClazz) {
-  return doRequest({ method: 'PUT', body: JSON.stringify(clazz), headers: config.headers }, `/${code}`);
+  return doRequest({ method: 'PUT', body: JSON.stringify(clazz), headers }, `/${code}`);
 }
 
 export function deleteClazz(code: string) {
@@ -22,7 +23,7 @@ export function deleteClazz(code: string) {
 }
 
 function doRequest(init: RequestInit, path: string = '') {
-  return fetch(`${config.baseUrl}/api/classes${path}`, init)
+  return fetch(`${process.env.REACT_APP_SM_API_URL}/api/classes${path}`, init)
     .then(response => {
       const data = response.json();
       return response.ok ? data : data.then(error => Promise.reject(error));
