@@ -1,6 +1,12 @@
 {
   "hosting": {
     "public": "./web-client/build",
+    "rewrites": [
+      {
+        "source": "**",
+        "destination": "/index.html"
+      }
+    ],
     "ignore": [
       "firebase.json",
       "**/.*",

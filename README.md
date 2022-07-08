@@ -1,4 +1,8 @@
 # School Management
+[![codecov](
+https://img.shields.io/badge/SchoolManagement-4E69C8?labelColor=4E69C8&amp;logo=Firefox&amp;)](https://school-management.loqo71la.dev)
+![Unit Test](https://github.com/loqo71la/school-management/actions/workflows/coverage-analysis.yml/badge.svg)
+[![codecov](https://codecov.io/gh/loqo71la/school-management/branch/main/graph/badge.svg?token=VTP819T047)](https://codecov.io/gh/loqo71la/school-management)
 
 Application to manage a system that assigns students to classes using SpringBoot and ReactJs.
 
