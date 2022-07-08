@@ -41,3 +41,21 @@ jobs:
           firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_SCHOOL_MANAGEMENT_LOQO71LA }}'
           channelId: live
           projectId: school-management-loqo71la
+
+  rest-api-deploy:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./rest-api
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Docker login
+        run: echo ${{ secrets.HEROKU_API_KEY }} | docker login -u _ --password-stdin registry.heroku.com
+
+      - name: Build Docker image
+        run: heroku container:push web -a school-management-loqo71la
+
+      - name: Deploy to Heroku
+        run: heroku container:release web -a school-management-loqo71la
