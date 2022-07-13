@@ -1,9 +1,11 @@
-import { IClazz } from "../shared/models/IClazz";
+import { api } from '../App.config';
+import { IClazz } from '../shared/models/IClazz';
+import { IPageable } from '../shared/models/IPageable';
 
 const headers = { "Content-Type": "application/json" }
 
-export function getClazzes() {
-  return doRequest({ method: 'GET' });
+export function getClazzes(page: number = 0, size: number = api.size): Promise<IPageable<IClazz>> {
+  return doRequest({ method: 'GET' }, `?size=${size}&page=${page}`);
 }
 
 export function getClazz(code: string) {

@@ -4,11 +4,11 @@ import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 
 import './index.css';
 import App from './App';
+import Clazz from './pages/Clazz';
+import Clazzes from './pages/Clazzes';
+import Student from './pages/Student';
+import Students from './pages/Students';
 import reportWebVitals from './reportWebVitals';
-import Clazzes from './pages/clazzes/Clazzes';
-import Clazz from './pages/clazz/Clazz';
-import Students from './pages/students/Students';
-import Student from './pages/student/Student';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
@@ -22,10 +22,8 @@ root.render(
           <Route path="/" element={<Navigate replace to="/classes" />} />
           <Route path="/classes" element={<Clazzes />} />
           <Route path="/classes/:code" element={<Clazz />} />
-          <Route path="/classes/newClass" element={<Clazz />} />
           <Route path="/students" element={<Students />} />
           <Route path="/students/:idNo" element={<Student />} />
-          <Route path="/students/newStudent" element={<Student />} />
         </Route>
       </Routes>
     </BrowserRouter>
