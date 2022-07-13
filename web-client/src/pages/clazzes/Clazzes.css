@@ -1,8 +1,0 @@
-.clazz-container {
-    display: grid;
-    gap: 1rem;
-    margin-left: 10rem;
-    margin-right: 10rem;
-    grid-auto-rows: 10rem;
-    grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr));
-}
