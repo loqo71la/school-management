@@ -21,6 +21,7 @@ dependencies {
     implementation 'org.postgresql:postgresql:42.4.0'
 
     testImplementation 'org.springframework.boot:spring-boot-starter-test:2.5.5'
+    testImplementation 'com.h2database:h2:2.1.214'
 }
 
 test {
