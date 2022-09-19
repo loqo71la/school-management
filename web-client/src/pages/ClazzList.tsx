@@ -5,16 +5,16 @@ import { IClazz } from '../shared/models/IClazz';
 import { IPageable } from '../shared/models/IPageable';
 import { IRequest } from '../shared/models/IData';
 import { getClazzes } from '../services/ClazzService';
-import Card from '../components/landing/Card';
+import Card from '../components/common/Card';
 import Loader from '../components/common/Loader';
 import Pagination from '../components/common/Pagination';
-import { icons } from '../App.config';
+import { PencilSquare } from '@loqo71la/react-web-icons';
 
-function Clazzes() {
+function ClazzList() {
   const [request, setRequest] = useState<IRequest<IPageable<IClazz>>>({ isLoading: true });
   const navigate = useNavigate();
 
-  const loadClazzes = (page: number = 0) => {
+  const loadClazzes = (page: number = 1) => {
     setRequest({ isLoading: true });
     getClazzes(page).then(data => setRequest({ isLoading: false, data: data }));
   }
@@ -25,21 +25,13 @@ function Clazzes() {
   return (
     <>
       <section className="flex flex-col sm:flex-row justify-between items-center gap-2">
-        <p className="font-light text-lg">Viewing {request.data?.items.length} from {request.data?.totalItem} Class(es)</p>
+        <p className="font-light">Viewing {request.data?.items.length} from {request.data?.totalItems} Class(es)</p>
         <button
           type="button"
           onClick={() => navigate('/classes/create')}
-          className="flex px-5 py-2.5 font-medium text-sm text-white bg-gradient-to-r from-teal-500 via-teal-600 to-teal-700 hover:bg-gradient-to-br focus:outline-none rounded-full"
+          className="flex gap-3 items-center px-5 py-2 text-sm text-white bg-gradient-to-r from-sky-500 to-sky-700 hover:bg-gradient-to-br focus:outline-none rounded-full"
         >
-          <svg
-            className="h-5 w-5 mr-2"
-            viewBox="0 0 20 20"
-            fill="currentColor"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path d={icons.pencil} />
-            <path d={icons.add} />
-          </svg>
+          <PencilSquare className="w-4 h-4" />
           Add Class
         </button>
       </section>
@@ -52,6 +44,7 @@ function Clazzes() {
         }
       </section>
       <Pagination
+        className="text-center mt-2"
         pageable={request.data!}
         onSelected={loadClazzes}
       />
@@ -59,4 +52,4 @@ function Clazzes() {
   );
 }
 
-export default Clazzes;
+export default ClazzList;

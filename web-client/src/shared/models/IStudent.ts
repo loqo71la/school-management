@@ -1,8 +1,12 @@
 export interface IStudent {
+  id: string;
   idNo: string;
-  firstName: string;
+  name: string;
   lastName: string;
-  createdDate: Date;
-  modifiedDate: Date;
-  gender: boolean;
+  genderId: number;
+  type: string;
+  createdBy: string;
+  createdAt: string;
+  updatedBy: string;
+  updatedAt: string;
 }

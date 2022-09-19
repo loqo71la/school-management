@@ -1,40 +1,43 @@
-import { icons } from '../../App.config';
+import { ChevronLeft, ChevronRight } from '@loqo71la/react-web-icons';
 import { IPageable } from '../../shared/models/IPageable';
 
-function Pagination({ pageable, onSelected }: { pageable: IPageable<any>, onSelected: (page: number) => void }) {
-  const loadPages = () => Array.from(Array(pageable.totalPage).keys());
+interface PaginationProps {
+  className?: string;
+  pageable: IPageable<any>;
+  onSelected: (page: number) => void;
+}
 
-  const hasLeft = () => pageable.currentPage > 0;
-  const hasRight = () => pageable.currentPage < pageable.totalPage - 1;
+function Pagination({ className, pageable, onSelected }: PaginationProps) {
+  const pages = Array.from(Array(pageable.totalPages).keys()).map(key => key + 1);
+
+  const hasLeft = () => pageable.currentPage > 1;
+  const hasRight = () => pageable.currentPage < pageable.totalPages;
   const moveLeft = () => hasLeft() && onSelected(pageable.currentPage - 1);
   const moveRight = () => hasRight() && onSelected(pageable.currentPage + 1);
 
   return (
-    <nav className="mt-4 text-center">
-      <ul className="inline-flex items-center bg-white text-gray-500 rounded-lg shadow-md">
+    <nav className={className}>
+      <ul className="inline-flex bg-white border border-sky-400 rounded-lg">
         <li
           onClick={moveLeft}
-          className={`py-2 px-3 ${hasLeft() && 'hover:bg-gray-100'}`}
+          className={`w-8 h-8 p-2 rounded-l-lg ${hasLeft() ? 'hover:bg-sky-100' : 'text-gray-400'}`}
         >
-          <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-            <path fillRule="evenodd" d={icons.left}></path>
-          </svg>
+          <ChevronLeft className="w-4 h-4" />
         </li>
-        {loadPages().map(page =>
+        {pages.map(page =>
           <li
             key={page}
-            onClick={() => onSelected(page)}
-            className={`py-2 px-4 ${page === pageable.currentPage && 'bg-teal-500 text-white'} hover:bg-gray-100 hover:text-gray-500`}>
-            {page + 1}
+            onClick={() => pageable.currentPage !== page && onSelected(page)}
+            className={`w-8 h-8 py-1.5 text-sm text-center ${page === pageable.currentPage ? 'bg-sky-500 text-white' : 'hover:bg-sky-100'}`}
+          >
+            {page}
           </li>
         )}
         <li
           onClick={moveRight}
-          className={`py-2 px-3 ${hasRight() && 'hover:bg-gray-100'}`}
+          className={`w-8 h-8 p-2 rounded-r-lg ${hasRight() ? 'hover:bg-sky-100' : 'text-gray-400'}`}
         >
-          <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-            <path fillRule="evenodd" d={icons.right}></path>
-          </svg>
+          <ChevronRight className="w-4 h-4" />
         </li>
       </ul>
     </nav>

@@ -2,31 +2,24 @@ import { socialLinks } from "../../App.config";
 
 function Footer() {
   return (
-    <footer className="pt-12 pb-2 bg-black text-white text-center">
+    <footer className="pt-6 pb-1 text-center">
       <div className="flex justify-center gap-2">
         {socialLinks.map((social, index) => (
           <a
             key={index}
+            target="_blank"
             href={social.link}
-            aria-label={`follow me on ${social.name}`}
+            rel="noopener noreferrer"
           >
-            <svg
-              role="img"
-              viewBox="0 0 24 24"
-              className="w-6 h-6 fill-gray-400 hover:fill-teal-600"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <title>{social.name}</title>
-              <path d={social.path} />
-            </svg>
+            <social.icon className="w-5 h-5 fill-gray-400 hover:fill-sky-500" />
           </a>
         ))}
       </div>
-      <p className="text-sm mt-3 text-gray-400">
+      <p className="text-sm font-light mt-2 text-gray-400">
         © 2022
         <a
           href="https://www.loqo71la.dev"
-          className="ml-1 font-semibold hover:text-teal-600"
+          className="ml-1 font-medium hover:text-sky-500"
         >
           loqo71la
         </a>
