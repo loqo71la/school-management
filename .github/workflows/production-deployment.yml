@@ -28,10 +28,24 @@ jobs:
 
       - name: Generate .env file
         env:
-          SM_API_URL: ${{ secrets.SM_API_URL }}
+          SM_API_URL: ${{ secrets.REACT_APP_SM_API_URL }}
+          API_KEY: ${{ secrets.REACT_APP_API_KEY }}
+          AUTH_DOMAIN: ${{ secrets.REACT_APP_AUTH_DOMAIN }}
+          PROJECT_ID: ${{ secrets.REACT_APP_PROJECT_ID }}
+          STORAGE_BUCKET: ${{ secrets.REACT_APP_STORAGE_BUCKET }}
+          MESSAGING_SENDER_ID: ${{ secrets.REACT_APP_MESSAGING_SENDER_ID }}
+          APP_ID: ${{ secrets.REACT_APP_APP_ID }}
+          MEASUREMENT_ID: ${{ secrets.REACT_APP_MEASUREMENT_ID }}
         run: |
           touch .env.production
           echo REACT_APP_SM_API_URL="$SM_API_URL" >> .env.production
+          echo REACT_APP_API_KEY="$API_KEY" >> .env.production
+          echo REACT_APP_AUTH_DOMAIN="$AUTH_DOMAIN" >> .env.production
+          echo REACT_APP_PROJECT_ID="$PROJECT_ID" >> .env.production
+          echo REACT_APP_STORAGE_BUCKET="$STORAGE_BUCKET" >> .env.production
+          echo REACT_APP_MESSAGING_SENDER_ID="$MESSAGING_SENDER_ID" >> .env.production
+          echo REACT_APP_APP_ID="$APP_ID" >> .env.production
+          echo REACT_APP_MEASUREMENT_ID="$MEASUREMENT_ID" >> .env.production
         shell: bash
 
       - name: Build project

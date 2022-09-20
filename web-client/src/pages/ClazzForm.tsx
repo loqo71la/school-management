@@ -26,11 +26,20 @@ function ClazzForm() {
   const [studentPage, setStudentPage] = useState<IPageable<any>>(newPage<any>());
 
   useEffect(() => {
-    if (id) getClazz(id).then(setClazz);
-    else setClazz(newClazz());
+    if (id !== undefined) {
+      getClazz(id).then((saved: IClazz) => {
+        const ids = saved.students.map(({ id }) => id)
+        getStudents().then(target => {
+          target.items = target.items.map(item => ({ ...item, isSelected: ids.includes(item.id) }));
+          setStudentPage(target);
+        });
+        setClazz(saved);
+      });
+    } else {
+      getStudents().then(setStudentPage);
+      setClazz(newClazz());
+    }
   }, [id]);
-
-  useEffect(() => { if (clazz?.id !== undefined) loadStudents(); }, [clazz?.id]);
 
   const handleSave = () => {
     const token = user?.accessToken || '';
