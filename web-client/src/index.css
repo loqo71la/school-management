@@ -2,6 +2,8 @@
 @tailwind components;
 @tailwind utilities;
 
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@200;300;400;500;600;700&display=swap');
+
 :root {
   --sm-text-primary: #24292e;
   --sm-text-dark: #fff;
@@ -10,6 +12,104 @@
   --sm-bg-error: #e73245;
   --sm-bg-dark: #003c8b;
   --sm-bg-card: #fff;
-    --sm-bg-card-hover: #ededed;
+  --sm-bg-card-hover: #ededed;
   --sm-border: #ced4da;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  font-family: 'Roboto', sans-serif;
+}
+
+.st1, .st2, .st3, .st4, .st5, .st6, .st7, .st8 {
+  background-image: url('../public/Students.png');
+  background-repeat: no-repeat;
+  height: 48px;
+  width: 48px;
+}
+
+.st1, .st2, .st3, .st4 {
+  background-position-y: 0px;
+}
+
+.st5, .st6, .st7, .st8 {
+  background-position-y: -48px;
+}
+
+.st1, .st5 {
+  background-position-x: 0px;
+}
+
+.st2, .st6 {
+  background-position-x: -48px;
+}
+
+.st3, .st7 {
+  background-position-x: -96px;
+}
+
+.st4, .st8 {
+  background-position-x: -144px;
+}
+
+
+.cz1, .cz2, .cz3, .cz4, .cz5, .cz6, .cz7, .cz8, .cz9, .cz10, .cz11, .cz12,
+.cz13, .cz14, .cz15, .cz16, .cz17, .cz18, .cz19, .cz20, .cz21, .cz22, .cz23, .cz24,
+.cz25, .cz26, .cz27, .cz28, .cz29, .cz30, .cz31, .cz32 {
+  background-image: url('../public/Clazzes.png');
+  background-repeat: no-repeat;
+  height: 48px;
+  width: 48px;
+}
+
+.cz1, .cz2, .cz3, .cz4, .cz5, .cz6, .cz7, .cz8 {
+  background-position-y: 0px;
+}
+
+.cz9, .cz10, .cz11, .cz12, .cz13, .cz14, .cz15, .cz16 {
+  background-position-y: -48px;
+}
+
+.cz17, .cz18, .cz19, .cz20, .cz21, .cz22, .cz23, .cz24 {
+  background-position-y: -96px;
+}
+
+.cz25, .cz26, .cz27, .cz28, .cz29, .cz30, .cz31, .cz32 {
+  background-position-y: -144px;
+}
+
+.cz1, .cz9, .cz17, .cz25 {
+  background-position-x: 0px;
+}
+
+.cz2, .cz10, .cz18, .cz26 {
+  background-position-x: -48px;
+}
+
+.cz3, .cz11, .cz19, .cz27 {
+  background-position-x: -96px;
+}
+
+.cz4, .cz12, .cz20, .cz28 {
+  background-position-x: -144px;
+}
+
+.cz5, .cz13, .cz21, .cz29 {
+  background-position-x: -192px;
+}
+
+.cz6, .cz14, .cz22, .cz30 {
+  background-position-x: -240px;
+}
+
+.cz7, .cz15, .cz23, .cz31 {
+  background-position-x: -288px;
+}
+
+.cz8, .cz16, .cz24, .cz32 {
+  background-position-x: -336px;
 }

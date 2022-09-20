@@ -1,5 +1,5 @@
 export interface IForm {
-  children: JSX.Element;
+  children: JSX.Element | JSX.Element[];
   onDelete: () => void;
   onSubmit: () => void;
   onCancel: () => void;

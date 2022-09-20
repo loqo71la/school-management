@@ -5,7 +5,7 @@ function InputText(props: IInput) {
   const [touched, setTouched] = useState(false);
   const isInvalid = () => props.required && !props.value && touched;
   return (
-    <label className="block mb-2">
+    <label className="block mb-3 text-sm">
       {props.label}{props.required && ' *'}
       <input
         type="text"
@@ -14,7 +14,7 @@ function InputText(props: IInput) {
         disabled={props.disabled}
         onBlur={() => setTouched(true)}
         onChange={event => props.onChange(event.target.value)}
-        className={`w-full p-1 text-md border ${isInvalid() ? 'border-red-300' : 'border-gray-300'} text-gray-700 focus:outline-teal-400`}
+        className={`w-full py-1 px-2 text-base font-light rounded-md border ${isInvalid() ? 'border-red-600' : 'border-gray-300'} text-gray-700 focus:outline-sky-400`}
       />
       {isInvalid() &&
         <span className="text-sm text-red-600">Please provide a valid value</span>

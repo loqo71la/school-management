@@ -1,26 +1,34 @@
-import { useLocation } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
+import { menus } from '../../App.config';
 
-import MenuItem from './MenuItem';
-
-function Menu() {
+function Menu(props: { className?: string, onClick?: () => void }) {
   const location = useLocation();
   const isSelected = (path: string) => location.pathname.startsWith(path);
 
   return (
-    <aside className="w-72 h-full py-4 hidden sm:block text-white font-medium bg-gradient-to-t from-teal-400 via-teal-600 to-teal-800">
+    <aside className={`flex-none w-64 h-full bg-[#434958] ${props.className || ''}`}>
       <img
         alt="Logo"
         src="/logo192.png"
-        className="w-20 h-20 mx-auto mb-8"
+        className="w-20 h-20 mx-auto my-8 rounded-full bg-white"
       />
-      <MenuItem
-        name="Classes"
-        isSelected={isSelected('/classes')}
-      />
-      <MenuItem
-        name="Students"
-        isSelected={isSelected('/students')}
-      />
+      {menus.map((menu, index) => {
+        const selected = isSelected(menu.path);
+        return (
+          <Link
+            className={`py-2 px-5 flex items-center gap-3 text-white ${selected ? 'bg-sky-500' : 'hover:bg-sky-800'}`}
+            onClick={props.onClick}
+            to={menu.path}
+            key={index}
+          >
+            {selected ?
+              <menu.selectedIcon className="w-4 h-4" /> :
+              <menu.icon className="w-4 h-4" />
+            }
+            {menu.name}
+          </Link>
+        );
+      })}
     </aside>
   );
 }

@@ -1,6 +1,6 @@
 export interface IPageable<T> {
   currentPage: number;
-  totalPage: number;
-  totalItem: number;
+  totalPages: number;
+  totalItems: number;
   items: T[]
 }
