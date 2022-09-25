@@ -11,7 +11,6 @@ function Profile() {
 
   const handleSignout = async () => {
     try {
-      console.log(user)
       await signOut();
       navigate('/');
     } catch (error) {
@@ -50,7 +49,7 @@ function Profile() {
   return (
     <Link
       to={`/login`}
-      className="py-1 px-5 border border-teal-600 rounded-full text-teal-600 hover:bg-teal-600 hover:text-white"
+      className="py-1 px-5 text-sm border border-sky-600 rounded-full text-sky-600 hover:bg-sky-600 hover:text-white"
     >
       Sign in
     </Link>

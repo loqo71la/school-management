@@ -2,8 +2,8 @@ import { api } from '../App.config';
 import { IPageable } from '../shared/models/IPageable';
 import { IStudent } from '../shared/models/IStudent';
 
-export function getStudents(page: number = 0, limit: number = api.size): Promise<IPageable<IStudent>> {
-  return doRequest({ method: 'GET' }, `?limit=${limit}&page=${page}`);
+export function getStudents(page: number = 0, limit: number = api.size, sortBy: string = api.sortBy): Promise<IPageable<IStudent>> {
+  return doRequest({ method: 'GET' }, `?limit=${limit}&page=${page}&sort=${sortBy}`);
 }
 
 export function getStudent(idNo: string) {

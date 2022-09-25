@@ -2,8 +2,8 @@ import { api } from '../App.config';
 import { IClazz } from '../shared/models/IClazz';
 import { IPageable } from '../shared/models/IPageable';
 
-export function getClazzes(page: number = 0, limit: number = api.size): Promise<IPageable<IClazz>> {
-  return doRequest({ method: 'GET' }, `?limit=${limit}&page=${page}`);
+export function getClazzes(page: number = 0, limit: number = api.size, sort: string = api.sortBy): Promise<IPageable<IClazz>> {
+  return doRequest({ method: 'GET' }, `?limit=${limit}&page=${page}&sort=${sort}`);
 }
 
 export function getClazz(code: string) {

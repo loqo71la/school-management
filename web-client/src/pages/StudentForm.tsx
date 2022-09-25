@@ -32,7 +32,7 @@ function StudentForm() {
   const handleSave = () => {
     const token = user?.accessToken || '';
     const savedClazz = id ? updateStudent(id, student!, token) : addStudent(student!, token);
-    savedClazz.then(r => {console.log(r);navigate('/students')}).catch(console.error);
+    savedClazz.then(_ => navigate('/students')).catch(console.error);
   }
 
   const handleDelete = () => {

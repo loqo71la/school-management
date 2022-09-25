@@ -15,7 +15,7 @@ function Card({ clazz }: { clazz: IClazz }) {
       <div className="flex justify-between">
         <section className="flex gap-2">
           <div className="p-1 bg-sky-100 rounded-md border border-sky-300">
-            <div className={clazz.type}></div>
+            <div className={clazz.type ? clazz.type : 'w-[48px] h-[48px]'} />
           </div>
           <h2 className="font-medium text-lg">
             {clazz.title}

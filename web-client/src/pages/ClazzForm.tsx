@@ -82,7 +82,7 @@ function ClazzForm() {
   return (
     <section className="p-4 bg-white rounded-lg">
       <FormHeader
-        title={id ? 'Update Student' : 'Create Student'}
+        title={id ? 'Update Clazz' : 'Create Clazz'}
         actions={id ? [<FormActionDelete handleDelete={handleDelete} />] : []}
       />
       <section className="md:px-2">
@@ -140,29 +140,31 @@ function ClazzForm() {
             )
           }
         </select>
-        <section className="mt-3">
-          <h4 className="text-sm">Students:</h4>
-          <section className="flex flex-wrap gap-2 mt-1">
-            {studentPage.items.map((student: any, index: number) =>
-              <button
-                key={index}
-                onClick={() => selectStudent(index)}
-                className={`inline-flex gap-1 pr-1.5 items-center rounded-md border border-sky-400 ${student.isSelected ? 'bg-sky-200' : 'hover:bg-sky-100 '}`}
-              >
-                <div className={student.type} />
-                <label className="font-light">
-                  {`${student.name || ''} ${student.lastName || ''}`}
-                  <span className="block text-left text-xs font-medium text-gray-600">@{student.idNo}</span>
-                </label>
-              </button>
-            )}
+        {studentPage.items.length > 0 &&
+          <section className="mt-3">
+            <h4 className="text-sm">Students:</h4>
+            <section className="flex flex-wrap gap-2 mt-1">
+              {studentPage.items.map((student: any, index: number) =>
+                <button
+                  key={index}
+                  onClick={() => selectStudent(index)}
+                  className={`inline-flex gap-1 pr-1.5 items-center rounded-md border border-sky-400 ${student.isSelected ? 'bg-sky-200' : 'hover:bg-sky-100 '}`}
+                >
+                  <div className={student.type} />
+                  <label className="font-light">
+                    {`${student.name || ''} ${student.lastName || ''}`}
+                    <span className="block text-left text-xs font-medium text-gray-600">@{student.idNo}</span>
+                  </label>
+                </button>
+              )}
+            </section>
+            <Pagination
+              className="mt-2"
+              pageable={studentPage}
+              onSelected={loadStudents}
+            />
           </section>
-          <Pagination
-            className="mt-2"
-            pageable={studentPage}
-            onSelected={loadStudents}
-          />
-        </section>
+        }
       </section>
       <section className="flex justify-center gap-2 mt-4 pt-4 border-t border-gray-200">
         <FormSave

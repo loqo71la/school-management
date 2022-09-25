@@ -11,7 +11,10 @@ function PopupMenu(props: PopupMenuProps) {
   const div = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const listener = ({ target }: MouseEvent) => setIsOpen(div.current?.contains(target as Node) || false);
+    const listener = ({ target }: MouseEvent) => {
+      const isContained = div.current?.contains(target as Node) || false;
+      if (!isContained) setIsOpen(isContained);
+    };
     window.addEventListener('click', listener);
     return () => window.removeEventListener('click', listener);
   }, []);

@@ -1,8 +1,9 @@
-import { GitHub, Grid1x2, Grid1x2Fill, HackerRank, People, PeopleFill, Telegram } from "@loqo71la/react-web-icons";
+import { GitHub, Grid1x2, Grid1x2Fill, HackerRank, Npm, People, PeopleFill, Telegram } from "@loqo71la/react-web-icons";
 
 export const socialLinks = [
   { link: 'https://t.me/loqo71la', icon: Telegram },
   { link: 'https://github.com/loqo71la', icon: GitHub },
+  { link: 'https://www.npmjs.com/~loqo71la', icon: Npm },
   { link: 'https://www.hackerrank.com/loqo71la', icon: HackerRank }
 ];
 
@@ -14,6 +15,8 @@ export const menus = [
 export const api = {
   url: `${process.env.REACT_APP_SM_API_URL}/api/school-management`,
   error: 'The server encountered an internal error and was unable to complete your request.',
+  expirationTime: 180000,
+  sortBy: 'date',
   size: 50
 };
 

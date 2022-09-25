@@ -1,6 +1,8 @@
+import { PencilSquare, SortDown } from '@loqo71la/react-web-icons';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router';
 
+import { api } from '../App.config';
 import { getStudents } from '../services/StudentService';
 import { IPageable } from '../shared/models/IPageable';
 import { IStudent } from '../shared/models/IStudent';
@@ -8,24 +10,37 @@ import { IRequest } from '../shared/models/IData';
 import List from '../components/common/List';
 import Loader from '../components/common/Loader';
 import Pagination from '../components/common/Pagination';
-import { PencilSquare } from '@loqo71la/react-web-icons';
 
 function StudentList() {
   const [request, setRequest] = useState<IRequest<IPageable<IStudent>>>({ isLoading: true });
+  const [sortBy, setSortBy] = useState(api.sortBy);
+  const [page, setPage] = useState(1);
   const navigate = useNavigate();
 
-  const loadStudents = (page: number = 1) => {
+  useEffect(() => {
     setRequest({ isLoading: true });
-    getStudents(page).then(data => setRequest({ isLoading: false, data: data }));
-  }
-
-  useEffect(() => { loadStudents() }, []);
+    getStudents(page, api.size, sortBy).then(data => setRequest({ isLoading: false, data: data }));
+  }, [page, sortBy]);
 
   if (request.isLoading) return <Loader />
   return (
     <>
       <section className="flex flex-col sm:flex-row justify-between items-center gap-2">
-        <p className="font-light">Viewing {request.data?.items.length} from {request.data?.totalItems} Student(s)</p>
+        <div>
+          <p className="font-light">Viewing {request.data?.items.length} from {request.data?.totalItems} Student(s)</p>
+          <div className="inline-flex items-center gap-1 text-sm font-light">
+            <SortDown className="w-4 h-4" />
+            <span>Sort by</span>
+            <select
+              value={sortBy}
+              onChange={event => setSortBy(event.target.value)}
+              className="ml-1.5 py-1 px-2 bg-gray-100 text-sm border border-gray-400 rounded-full focus:outline-none"
+            >
+              <option value="date">Last Update</option>
+              <option value="name">Name A-Z</option>
+            </select>
+          </div>
+        </div>
         <button
           type="button"
           onClick={() => navigate('/students/create')}
@@ -46,7 +61,7 @@ function StudentList() {
       <Pagination
         className="text-center mt-2"
         pageable={request.data!}
-        onSelected={loadStudents}
+        onSelected={setPage}
       />
     </>
   );
