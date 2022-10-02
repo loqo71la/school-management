@@ -7,12 +7,14 @@ import { api } from '../App.config';
 
 interface AuthContextProps {
   user: IUser | null,
+  isLoading: boolean,
   signOut: () => Promise<void>,
   signInWithGitHub: () => Promise<UserCredential>,
   signInWithGoogle: () => Promise<UserCredential>
 };
 
 function AuthProvider(props: { children: JSX.Element }) {
+  const [isLoading, setIsLoading] = useState<boolean>(true);
   const [user, setUser] = useState<IUser | null>(null);
   const [count, setCount] = useState<number>(0);
   const [limit, setLimit] = useState<number>(0);
@@ -22,11 +24,14 @@ function AuthProvider(props: { children: JSX.Element }) {
       const expiration = (new Date(time)).getTime();
       const current = (new Date()).getTime();
       const delta = expiration - current - api.expirationTime;
-      return delta > 0 ? delta : 0;
+      return delta > 0 ? delta : 1;
     };
 
     onAuthStateChanged(auth, async authState => {
-      if (!authState) return;
+      if (!authState) {
+        setIsLoading(false)
+        return;
+      }
       const { token, expirationTime } = await authState.getIdTokenResult(count > 0);
       setLimit(calculate(expirationTime));
       setUser({
@@ -35,6 +40,7 @@ function AuthProvider(props: { children: JSX.Element }) {
         image: authState.photoURL || '',
         name: authState.displayName || ''
       });
+      setIsLoading(false);
     });
   }, [count]);
 
@@ -54,6 +60,7 @@ function AuthProvider(props: { children: JSX.Element }) {
     <AuthContext.Provider
       value={{
         user,
+        isLoading,
         signOut: onSignOut,
         signInWithGitHub: () => signInWithPopup(auth, new GithubAuthProvider()),
         signInWithGoogle: () => signInWithPopup(auth, new GoogleAuthProvider()),

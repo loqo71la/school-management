@@ -20,9 +20,12 @@ function StudentInfo() {
   useEffect(() => { getStudent(id!).then(setStudent); }, [id]);
 
   const handleDelete = () => {
-    const token = user?.accessToken || '';
+    if (!user) {
+      navigate('/login');
+      return;
+    }
     const isDeleted = window.confirm(`Are you sure you want to delete the Student [${student?.idNo}]`);
-    if (isDeleted && id) deleteStudent(id, token).then(_ => navigate(-1));
+    if (isDeleted && id) deleteStudent(id, user.accessToken).then(_ => navigate(-1));
   }
 
   if (!student) return <Loader />

@@ -19,9 +19,12 @@ function ClazzInfo() {
   useEffect(() => { getClazz(id!).then(setClazz); }, [id]);
 
   const handleDelete = () => {
-    const token = user?.accessToken || '';
+    if (!user) {
+      navigate('/login');
+      return;
+    }
     const isDeleted = window.confirm(`Are you sure you want to delete the Class [${clazz?.code}]`);
-    if (isDeleted && id) deleteClazz(id, token).then(_ => navigate(-1));
+    if (isDeleted && id) deleteClazz(id, user.accessToken).then(_ => navigate(-1));
   }
 
   if (!clazz) return <Loader />
