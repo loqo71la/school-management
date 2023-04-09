@@ -1,24 +1,24 @@
-rest-api/.gradle
-rest-api/build/
-!rest-api/gradle/wrapper/gradle-wrapper.jar
-!rest-api/**/src/main/**/build/
-!rest-api/**/src/test/**/build/
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
 
-### IntelliJ IDEA ###
-rest-api/.idea
-rest-api/*.iws
-rest-api/*.iml
-rest-api/*.ipr
-rest-api/out/
-!rest-api/**/src/main/**/out/
-!rest-api/**/src/test/**/out/
+node_modules
+dist
+dist-ssr
+*.local
 
-### NetBeans ###
-rest-api/nbproject/private/
-rest-api/nbbuild/
-rest-api/dist/
-rest-api/nbdist/
-rest-api/.nb-gradle/
-
-### VS Code ###
-rest-api/.vscode/
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?

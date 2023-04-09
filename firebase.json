@@ -1,6 +1,6 @@
 {
   "hosting": {
-    "public": "./web-client/build",
+    "public": "./build",
     "rewrites": [
       {
         "source": "**",
@@ -9,9 +9,8 @@
     ],
     "ignore": [
       "firebase.json",
-      "**/.*",
-      "**/node_modules/**",
-      "rest-api/**"
+      ".*",
+      "node_modules/**"
     ]
   }
 }
