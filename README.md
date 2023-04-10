@@ -1,6 +1,7 @@
 # School Management
 [![codecov](
 https://img.shields.io/badge/SchoolManagement-4E69C8?labelColor=4E69C8&amp;logo=Firefox&amp;)](https://school-management.loqo71la.dev)
+[![docker](https://img.shields.io/docker/v/loqo71la/school-management)](https://hub.docker.com/r/loqo71la/school-management)
 
 It is a modern and user-friendly user interface that allows educators to interact with the class and student management API. With an intuitive and responsive user interface that provides a smooth and engaging user experience for registering, viewing, and managing classes, students, grades, and more.
 
@@ -28,4 +29,20 @@ docker-compose ud -d
 ```
 docker-compose -f docker-compose.api.yml -f docker-compose.yml up -d
 ```
-FInally point your browser to [http://localhost:5173](http://localhost:5173)
+Finally point your browser to [http://localhost:5173](http://localhost:5173)
+
+
+# For Development
+## Prerequisites
+- [node 16+](https://nodejs.org/en/download)
+
+## How to use
+Install dependencies
+```
+npm install
+```
+Run the client
+```
+npm run dev
+```
+Finally point your browser to [http://localhost:5173](http://localhost:5173)
