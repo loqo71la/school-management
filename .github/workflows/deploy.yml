@@ -22,12 +22,12 @@ jobs:
 
       - name: Generate .env file
         env:
-          SM_API_URL: ${{ secrets.SM_API_URL }}
-          SM_AUTH_URL: ${{ secrets.SM_AUTH_URL }}
+          VITE_SM_API_URL: ${{ secrets.VITE_SM_API_URL }}
+          VITE_SM_AUTH_URL: ${{ secrets.VITE_SM_AUTH_URL }}
         run: |
           touch .env.production
-          echo VITE_SM_API_URL="$SM_API_URL" >> .env.production
-          echo VITE_SM_AUTH_URL="$SM_AUTH_URL" >> .env.production
+          echo VITE_SM_API_URL="$VITE_SM_API_URL" >> .env.production
+          echo VITE_SM_AUTH_URL="$VITE_SM_AUTH_URL" >> .env.production
         shell: bash
 
       - name: Build project
