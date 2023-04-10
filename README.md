@@ -1,8 +1,6 @@
 # School Management
 [![codecov](
 https://img.shields.io/badge/SchoolManagement-4E69C8?labelColor=4E69C8&amp;logo=Firefox&amp;)](https://school-management.loqo71la.dev)
-[![Unit Test](https://github.com/loqo71la/school-management/actions/workflows/coverage-analysis.yml/badge.svg)](https://github.com/loqo71la/school-management/actions/workflows/coverage-analysis.yml)
-[![codecov](https://codecov.io/gh/loqo71la/school-management/branch/main/graph/badge.svg?token=VTP819T047)](https://codecov.io/gh/loqo71la/school-management)
 
 It is a modern and user-friendly user interface that allows educators to interact with the class and student management API. With an intuitive and responsive user interface that provides a smooth and engaging user experience for registering, viewing, and managing classes, students, grades, and more.
 
