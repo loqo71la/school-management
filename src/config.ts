@@ -1,7 +1,10 @@
-import { GitHub, Grid1x2, Grid1x2Fill, HackerRank, Npm, People, PeopleFill } from "@loqo71la/react-web-icons";
+import { Docker, GitHub, Grid1x2, Grid1x2Fill, HackerRank, Npm, People, PeopleFill } from "@loqo71la/react-web-icons";
+import { Java } from "./components/common/Icon";
 
 export const socialLinks = [
   { link: 'https://github.com/loqo71la', icon: GitHub },
+  { link: 'https://central.sonatype.com/namespace/dev.loqo71la', icon: Java },
+  { link: 'https://hub.docker.com/u/loqo71la', icon: Docker },
   { link: 'https://www.npmjs.com/~loqo71la', icon: Npm },
   { link: 'https://www.hackerrank.com/loqo71la', icon: HackerRank }
 ];
