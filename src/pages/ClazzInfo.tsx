@@ -59,8 +59,8 @@ function ClazzInfo() {
       </section>
       <label className="px-2">Description:<span className="px-2 block text-base font-light">{clazz.description}</span></label>
       <section className="grid md:grid-cols-2 gap-1 px-2 py-4 text-sm font-medium">
-        <label>Created By:<span className="block text-base font-light">@{clazz.createdBy}</span></label>
-        <label>Updated By:<span className="block text-base font-light">@{clazz.updatedBy}</span></label>
+        <label>Created By:<span className="block text-base font-light">{clazz.createdBy}</span></label>
+        <label>Updated By:<span className="block text-base font-light">{clazz.updatedBy}</span></label>
         <label>Created At:<span className="block text-base font-light">{toDate(clazz.createdAt)}</span></label>
         <label>Updated At:<span className="block text-base font-light">{toDate(clazz.updatedAt)}</span></label>
       </section>

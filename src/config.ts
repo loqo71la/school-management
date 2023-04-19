@@ -1,12 +1,11 @@
-import { Docker, GitHub, Grid1x2, Grid1x2Fill, HackerRank, Npm, People, PeopleFill } from "@loqo71la/react-web-icons";
-import { Java } from "./components/common/Icon";
+import { Docker, GitHub, Grid1x2, Grid1x2Fill, HackerRank, Java, Npm, People, PeopleFill } from "@loqo71la/react-web-icons";
 
 export const socialLinks = [
-  { link: 'https://github.com/loqo71la', icon: GitHub },
-  { link: 'https://central.sonatype.com/namespace/dev.loqo71la', icon: Java },
-  { link: 'https://hub.docker.com/u/loqo71la', icon: Docker },
-  { link: 'https://www.npmjs.com/~loqo71la', icon: Npm },
-  { link: 'https://www.hackerrank.com/loqo71la', icon: HackerRank }
+  { link: 'https://github.com/loqo71la', icon: GitHub, title: 'GitHub' },
+  { link: 'https://central.sonatype.com/namespace/dev.loqo71la', icon: Java, title: 'Maven Central' },
+  { link: 'https://hub.docker.com/u/loqo71la', icon: Docker, title: 'DockerHub' },
+  { link: 'https://www.npmjs.com/~loqo71la', icon: Npm, title: 'npm' },
+  { link: 'https://www.hackerrank.com/loqo71la', icon: HackerRank, title: 'HackerRank' }
 ];
 
 export const menus = [
@@ -15,8 +14,8 @@ export const menus = [
 ]
 
 export const api = {
-  url: import.meta.env.VITE_SM_API_URL || '',
-  auth: import.meta.env.VITE_SM_AUTH_URL || '',
+  url: import.meta.env.VITE_SM_API_URL || 'http://localhost:8080/api',
+  auth: import.meta.env.VITE_SM_AUTH_URL || 'https://app.loqo71la.dev/auth?client_id=4r97jsiucp6sk1nddo37huydf1&response_type=code',
   error: 'The server encountered an internal error and was unable to complete your request.',
   expirationTime: 180000,
   sortBy: 'date',

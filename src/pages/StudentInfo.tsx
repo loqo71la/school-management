@@ -51,8 +51,8 @@ function StudentInfo() {
         <label>Longitude:<span className="block text-base font-light">{student.longitude}</span></label>
       </section>
       <section className="grid md:grid-cols-2 gap-1 px-2 py-6 text-sm font-medium">
-        <label>Created By:<span className="block text-base font-light">@{student.createdBy}</span></label>
-        <label>Updated By:<span className="block text-base font-light">@{student.updatedBy}</span></label>
+        <label>Created By:<span className="block text-base font-light">{student.createdBy}</span></label>
+        <label>Updated By:<span className="block text-base font-light">{student.updatedBy}</span></label>
         <label>Created At:<span className="block text-base font-light">{toDate(student.createdAt)}</span></label>
         <label>Updated At:<span className="block text-base font-light">{toDate(student.updatedAt)}</span></label>
       </section>

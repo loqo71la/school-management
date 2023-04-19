@@ -17,11 +17,21 @@ function AuthProvider(props: { children: JSX.Element }) {
 
   const [user, setUser] = useState<IUser | null>(() => {
     const token = searchParams.get('id_token') ?? fromLocal('idToken');
-    if (!token) return null
+    if (!token) return null;
 
-    if (searchParams.has('id_token')) toLocal('idToken', token);
-    const data: any = jwt_decode(token);
-    return { username: data.username, imageUrl: data.imageUrl, email: data.email };
+    let user = null;
+    try {
+      const data: any = jwt_decode(token);
+      const now = Date.now().valueOf() / 1000;
+      if (now > data?.exp) toLocal('idToken', null);
+      else {
+        toLocal('idToken', token);
+        user = { username: data.username, imageUrl: data.imageUrl, email: data.email };
+      }
+    } catch (error) {
+      console.error(error);
+    }
+    return user;
   });
 
   const onSignOut = () => {

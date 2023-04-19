@@ -11,7 +11,7 @@ function Footer() {
             href={social.link}
             rel="noopener noreferrer"
           >
-            <social.icon className="w-5 h-5 fill-gray-400 hover:fill-sky-500" />
+            <social.icon className="w-5 h-5 fill-gray-400 hover:fill-sky-500" title={social.title} />
           </a>
         ))}
       </div>
