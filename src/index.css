@@ -9,18 +9,6 @@
   height: 100vh;
 }
 
-:root {
-  --sm-text-primary: #24292e;
-  --sm-text-dark: #fff;
-  --sm-bg-main: #f4f8ff;
-  --sm-bg-secondary: #00aeff;
-  --sm-bg-error: #e73245;
-  --sm-bg-dark: #003c8b;
-  --sm-bg-card: #fff;
-  --sm-bg-card-hover: #ededed;
-  --sm-border: #ced4da;
-}
-
 html,
 body,
 #root {
