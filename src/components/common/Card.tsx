@@ -32,7 +32,7 @@ function Card({ clazz }: { clazz: IClazz }) {
 
       </div>
       <p className="flex-1 font-light">{clazz.description}</p>
-      <p className="text-sm font-semibold">Last update<span className="font-normal ml-1">{toDate(clazz.createdAt)}</span></p>
+      <p className="text-sm font-semibold">Last update<span className="font-normal ml-1">{toDate(clazz.updatedAt)}</span></p>
     </section>
   );
 }
